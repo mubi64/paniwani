@@ -5,7 +5,7 @@ import 'welcome_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   final AuthService _authService = AuthService();
-
+  
   ProfileScreen({Key? key}) : super(key: key);
 
   Future<void> _logout(BuildContext context) async {
@@ -17,23 +17,38 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
+  String _getInitials(String? fullName) {
+    if (fullName == null || fullName.isEmpty) return "U";
+    
+    final nameParts = fullName.split(" ");
+    if (nameParts.length > 1 && nameParts[1].isNotEmpty) {
+      return "${nameParts[0][0]}${nameParts[1][0]}".toUpperCase();
+    }
+    
+    return fullName.substring(0, 1).toUpperCase();
+  }
+
   @override
   Widget build(BuildContext context) {
     final user = _authService.currentUser;
-
+    final colorScheme = Theme.of(context).colorScheme;
+    
     if (user == null) {
-      // This shouldn't happen under normal circumstances
       return Scaffold(
-        appBar: AppBar(
-          title: const Text(AppStrings.profile),
-        ),
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Text("You are not logged in"),
-              const SizedBox(height: 16),
+              const Text(
+                "You are not logged in",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+              ),
+              const SizedBox(height: 24),
               ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                ),
                 onPressed: () {
                   Navigator.pushAndRemoveUntil(
                     context,
@@ -41,7 +56,7 @@ class ProfileScreen extends StatelessWidget {
                     (route) => false,
                   );
                 },
-                child: const Text("Go to Login"),
+                child: const Text("Go to Login", style: TextStyle(fontSize: 16)),
               ),
             ],
           ),
@@ -50,146 +65,265 @@ class ProfileScreen extends StatelessWidget {
     }
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(AppStrings.profile),
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Profile Picture
-            Center(
-              child: CircleAvatar(
-                radius: 60,
-                backgroundColor: Theme.of(context).colorScheme.primary,
-                child: Text(
-                  user.fullName?.isNotEmpty == true
-                      ? user.fullName!.substring(0, 1).toUpperCase()
-                      : "U",
-                  style: const TextStyle(
-                    fontSize: 48,
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
+      backgroundColor: colorScheme.surface,
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            expandedHeight: 200,
+            floating: false,
+            pinned: true,
+            flexibleSpace: FlexibleSpaceBar(
+              background: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      colorScheme.primary,
+                      colorScheme.primaryContainer,
+                    ],
                   ),
                 ),
-              ),
-            ),
-            const SizedBox(height: 24),
-            
-            // Profile Info
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
                 child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    _buildProfileItem(
-                      context,
-                      "Full Name",
-                      user.fullName ?? "Not Set",
-                      Icons.person,
-                    ),
-                    const Divider(),
-                    _buildProfileItem(
-                      context,
-                      "Phone Number",
-                      user.phoneNumber,
-                      Icons.phone,
-                    ),
-                    const Divider(),
-                    _buildProfileItem(
-                      context,
-                      "Email",
-                      user.email ?? "Not Set",
-                      Icons.email,
-                    ),
-                    const Divider(),
-                    _buildProfileItem(
-                      context,
-                      "Gender",
-                      user.gender ?? "Not Set",
-                      Icons.people,
-                    ),
-                    const Divider(),
-                    _buildProfileItem(
-                      context,
-                      "Date of Birth",
-                      user.dateOfBirth != null
-                          ? "${user.dateOfBirth!.day}/${user.dateOfBirth!.month}/${user.dateOfBirth!.year}"
-                          : "Not Set",
-                      Icons.calendar_today,
+                    const SizedBox(height: 60),
+                    Hero(
+                      tag: 'profilePicture',
+                      child: Container(
+                        height: 100,
+                        width: 100,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.white,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.2),
+                              blurRadius: 8,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: Center(
+                          child: Text(
+                            _getInitials(user.fullName),
+                            style: TextStyle(
+                              fontSize: 36,
+                              fontWeight: FontWeight.bold,
+                              color: colorScheme.primary,
+                            ),
+                          ),
+                        ),
+                      ),
                     ),
                   ],
                 ),
               ),
+              title: Padding(
+                padding: const EdgeInsets.only(bottom: 8.0),
+                child: Text(
+                  user.fullName?.isNotEmpty == true ? user.fullName! : "User",
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                  ),
+                ),
+              ),
+              centerTitle: true,
             ),
-            
-            const SizedBox(height: 24),
-            
-            // Action Buttons
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton.icon(
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.edit_outlined),
                 onPressed: () {
-                  // Edit profile functionality
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text("Edit Profile functionality")),
                   );
                 },
-                icon: const Icon(Icons.edit),
-                label: const Text("Edit Profile"),
+                tooltip: "Edit Profile",
+              ),
+            ],
+          ),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Personal Info
+                  Text(
+                    "Personal Information",
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: colorScheme.primary,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  _buildInfoCard(
+                    context,
+                    children: [
+                      _buildProfileItem(
+                        context: context,
+                        label: "Full Name",
+                        value: user.fullName ?? "Not Set",
+                        icon: Icons.person_outlined,
+                      ),
+                      _buildProfileItem(
+                        context: context,
+                        label: "Email",
+                        value: user.email ?? "Not Set",
+                        icon: Icons.email_outlined,
+                      ),
+                      _buildProfileItem(
+                        context: context,
+                        label: "Phone Number",
+                        value: user.phoneNumber,
+                        icon: Icons.phone_outlined,
+                      ),
+                    ],
+                  ),
+                  
+                  const SizedBox(height: 24),
+                  
+                  // Additional Info
+                  Text(
+                    "Additional Information",
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: colorScheme.primary,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  _buildInfoCard(
+                    context,
+                    children: [
+                      _buildProfileItem(
+                        context: context,
+                        label: "Gender",
+                        value: user.gender ?? "Not Set",
+                        icon: Icons.people_outline,
+                      ),
+                      _buildProfileItem(
+                        context: context,
+                        label: "Date of Birth",
+                        value: user.dateOfBirth != null
+                            ? "${user.dateOfBirth!.day}/${user.dateOfBirth!.month}/${user.dateOfBirth!.year}"
+                            : "Not Set",
+                        icon: Icons.calendar_today_outlined,
+                      ),
+                    ],
+                  ),
+                  
+                  const SizedBox(height: 36),
+                  
+                  // Actionable Buttons
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      // Edit profile functionality
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text("Edit Profile functionality")),
+                      );
+                    },
+                    icon: const Icon(Icons.edit_outlined),
+                    label: const Text("Edit Profile"),
+                    style: ElevatedButton.styleFrom(
+                      minimumSize: const Size(double.infinity, 56),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  OutlinedButton.icon(
+                    onPressed: () => _logout(context),
+                    icon: const Icon(Icons.logout),
+                    label: const Text("Logout"),
+                    style: OutlinedButton.styleFrom(
+                      minimumSize: const Size(double.infinity, 56),
+                      foregroundColor: Colors.red,
+                      side: const BorderSide(color: Colors.red),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                ],
               ),
             ),
-            const SizedBox(height: 16),
-            SizedBox(
-              width: double.infinity,
-              child: OutlinedButton.icon(
-                onPressed: () => _logout(context),
-                icon: const Icon(Icons.logout),
-                label: const Text("Logout"),
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: Colors.red,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInfoCard(BuildContext context, {required List<Widget> children}) {
+    return Card(
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(
+          color: Theme.of(context).colorScheme.outlineVariant,
+          width: 1,
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            for (int i = 0; i < children.length; i++) ...[
+              children[i],
+              if (i < children.length - 1)
+                Divider(
+                  color: Theme.of(context).colorScheme.outlineVariant,
+                  height: 32,
                 ),
-              ),
-            ),
+            ],
           ],
         ),
       ),
     );
   }
 
-  Widget _buildProfileItem(
-    BuildContext context,
-    String label,
-    String value,
-    IconData icon,
-  ) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Row(
-        children: [
-          Icon(
-            icon,
-            color: Theme.of(context).colorScheme.primary,
+  Widget _buildProfileItem({
+    required BuildContext context,
+    required String label,
+    required String value,
+    required IconData icon,
+  }) {
+    final colorScheme = Theme.of(context).colorScheme;
+    
+    return Row(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            color: colorScheme.primaryContainer.withOpacity(0.3),
+            borderRadius: BorderRadius.circular(12),
           ),
-          const SizedBox(width: 16),
-          Column(
+          child: Icon(
+            icon,
+            color: colorScheme.primary,
+            size: 22,
+          ),
+        ),
+        const SizedBox(width: 16),
+        Expanded(
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 label,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Colors.grey,
+                  color: colorScheme.onSurfaceVariant,
                 ),
               ),
+              const SizedBox(height: 4),
               Text(
                 value,
-                style: Theme.of(context).textTheme.bodyLarge,
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

@@ -49,7 +49,7 @@ class WelcomeScreen extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const OtpVerificationScreen(phoneNumber: ""),
+                        builder: (context) => const MobileNumberScreen(),
                       ),
                     );
                   },

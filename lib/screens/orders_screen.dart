@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../utils/strings.dart';
 
 class OrdersScreen extends StatelessWidget {
-  const OrdersScreen({Key? key}) : super(key: key);
+  OrdersScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -29,9 +29,6 @@ class OrdersScreen extends StatelessWidget {
     ];
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(AppStrings.orders),
-      ),
       body: ListView.builder(
         padding: const EdgeInsets.all(16),
         itemCount: orders.length,

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:paniwani/screens/navigation_bar_screen.dart';
 import '../services/auth_service.dart';
 import '../utils/strings.dart';
 import 'home_screen.dart';
@@ -77,7 +78,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
           Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(
-              builder: (context) => const HomeScreen(),
+              builder: (context) => NavigationBarScreen(),
             ),
             (route) => false,
           );

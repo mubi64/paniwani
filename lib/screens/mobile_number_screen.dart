@@ -77,7 +77,7 @@ class _MobileNumberScreenState extends State<MobileNumberScreen> {
                 controller: _phoneController,
                 decoration: const InputDecoration(
                   hintText: "Phone Number",
-                  prefixText: "+91 ",
+                  prefixText: "+92 ",
                 ),
                 keyboardType: TextInputType.phone,
                 inputFormatters: [

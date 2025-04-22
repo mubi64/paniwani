@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:paniwani/screens/navigation_bar_screen.dart';
 import 'screens/welcome_screen.dart';
 import 'utils/app_theme.dart';
 
@@ -15,7 +16,7 @@ class PaniWaniApp extends StatelessWidget {
       title: 'PaniWani',
       theme: AppTheme.theme,
       debugShowCheckedModeBanner: false,
-      home: const WelcomeScreen(),
+      home: NavigationBarScreen(),
     );
   }
 }

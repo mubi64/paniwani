@@ -73,7 +73,7 @@ class _UserInfoScreenState extends State<UserInfoScreen> {
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
-            builder: (context) => const HomeScreen(),
+            builder: (context) => HomeScreen(),
           ),
           (route) => false,
         );
