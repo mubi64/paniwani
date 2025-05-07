@@ -3,14 +3,20 @@ class AppStrings {
   static const welcomeTitle = "Welcome to PaniWani";
   static const register = "Register";
   static const login = "Login";
+  static const getStarted = "GET STARTED";
   static const mobileNumberLabel = "Enter Mobile Number";
   static const sendOtp = "Send OTP";
-  static const otpLabel = "Enter OTP";
+  static const otpLabel = "OTP Verification";
   static const verifyOtp = "Verify OTP";
   static const resendOtp = "Resend OTP";
-  static const resendOtpTimer = "Resend OTP in";
+  static const resendOtpTimer = "Resend OTP in ";
+  static const donotResivedOtp = "Didn’t receive OTP? ";
   static const fullName = "Full Name";
+  static const title = "Title";
+  static const completeAddress = "Complete Address";
   static const email = "Email";
+  static const country = "Country";
+  static const city = "City";
   static const dateOfBirth = "Date of Birth";
   static const gender = "Gender";
   static const saveAndContinue = "Save & Continue";
@@ -25,4 +31,34 @@ class AppStrings {
   static const error = "Error occurred. Please try again.";
   static const invalidMobileNumber = "Please enter a valid mobile number";
   static const invalidOtp = "Invalid OTP. Please check and try again.";
+  static const selectGender = "Select Gender";
+  static const completeProfile = "Complete Your Profile";
+  static const provideInformation = "Please provide your information";
+  static const selectDate = "Select Date";
+  static const msgTryAgain =
+      "Oops! Something went wrong, please try again later.";
+  static const selectMessage = "Please select your";
+  static const enterYour = "Please enter your";
+  static const enterValid = "Please enter a valid";
+  static const leftbottles = "bottles left";
+  static const bottle = "Bottle";
+  static String btnOk = "OK";
+  static String btnYes = "Yes";
+  static String btnNo = "No";
+  static String btnEdit = "Edit";
+  static String btnAdd = "Add";
+  static String btnSave = "Save";
+  static String btnChangePassword = "Change Password";
+  static String comfirmationMessage =
+      "Are you sure you want to proceed with this purchase?";
+  static String makeInvoice = "Creating invoice...";
+  static String paymentProcess = "Processing payment...";
+  static String active = 'Active';
+  static String packages = 'Packages';
+  static String consumed = "Consumed";
+  static String confirmLogout = "Are you sure to logout from the app?";
+  static String settings = "Settings";
+  static String personalInfo = "Personal Information";
+  static String additionalInfo = "Additional Information";
+  static String thankforpayment = "Thank you for your payment!";
 }

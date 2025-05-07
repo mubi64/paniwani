@@ -1,4 +1,4 @@
-import '../models/bundle.dart';
+import '../../models/bundle.dart';
 
 class BundlesService {
   Future<List<Bundle>> getActiveBundles() async {

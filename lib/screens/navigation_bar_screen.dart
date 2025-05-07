@@ -3,16 +3,35 @@ import 'package:paniwani/screens/home_screen.dart';
 import 'package:paniwani/screens/orders_screen.dart';
 import 'package:paniwani/screens/profile_screen.dart';
 import 'package:paniwani/utils/strings.dart';
+import 'package:paniwani/widgets/my_drawer.dart';
+
+import '../api/services/auth_service.dart';
+import '../widgets/custom_appbar.dart';
+import 'place_order_screen.dart';
 
 class NavigationBarScreen extends StatefulWidget {
-  const NavigationBarScreen({super.key});
+  final int initialIndex;
+  const NavigationBarScreen({super.key, this.initialIndex = 0});
 
   @override
   State<NavigationBarScreen> createState() => _NavigationBarScreenState();
 }
 
 class _NavigationBarScreenState extends State<NavigationBarScreen> {
+  final AuthService _authService = AuthService();
   int _selectedIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    getUserInfo();
+  }
+
+  void getUserInfo() async {
+    await _authService.getCurrentUser(context);
+    _selectedIndex = widget.initialIndex;
+    setState(() {});
+  }
 
   final icons = [
     Icons.home_outlined,
@@ -22,32 +41,22 @@ class _NavigationBarScreenState extends State<NavigationBarScreen> {
 
   final labels = [AppStrings.home, AppStrings.orders, AppStrings.profile];
 
-  final List<Widget> _screens = [
-    HomeScreen(),
-    OrdersScreen(),
-    ProfileScreen(),
-  ];
+  final List<Widget> _screens = [HomeScreen(), OrdersScreen(), ProfileScreen()];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
+      drawer: MyDrawer(),
       appBar: _buildAppbar(),
       body: SafeArea(
-        child: Column(
-          children: [
-            Expanded(
-              child: _screens[_selectedIndex],
-            ),
-          ],
-        ),
+        child: Column(children: [Expanded(child: _screens[_selectedIndex])]),
       ),
       bottomNavigationBar: _buildBottomNavigationBar(),
     );
   }
 
   Widget _buildBottomNavigationBar() {
-   
     return BottomNavigationBar(
       currentIndex: _selectedIndex,
       onTap: (index) => setState(() => _selectedIndex = index),
@@ -64,10 +73,7 @@ class _NavigationBarScreenState extends State<NavigationBarScreen> {
     );
   }
 
-  AppBar _buildAppbar() {
-      return AppBar(
-          title: Text(labels[_selectedIndex])
-        );
-
+  _buildAppbar() {
+    return CustomAppBar(title: labels[_selectedIndex]);
   }
 }

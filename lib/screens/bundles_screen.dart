@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/bundle.dart';
-import '../services/bundles_service.dart';
+import '../api/services/bundles_service.dart';
 import '../utils/strings.dart';
 import '../widgets/bundle_card.dart';
 
