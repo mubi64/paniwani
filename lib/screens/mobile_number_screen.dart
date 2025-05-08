@@ -45,13 +45,27 @@ class _MobileNumberScreenState extends State<MobileNumberScreen> {
         !_urlController.text.startsWith("http://")) {
       _urlController.text = "https://${_urlController.text}";
     }
+    setState(() {
+      _urlController.text = _urlController.text;
+    });
   }
 
   Future<void> _sendOtp() async {
     if (!_formKey.currentState!.validate()) return;
     await validateBaseUrl();
-    await _pref.saveString(_pref.prefBaseUrl, _urlController.text);
+    utils
+          .isNetworkAvailable(context, utils, showDialog: true)
+          .then((value) {
+        utils.hideKeyboard(context);
 
+        checkNetwork(value);
+      });
+    
+  }
+
+  void checkNetwork(bool value) async {
+    if (value) {
+      await _pref.saveString(_pref.prefBaseUrl, _urlController.text);
     setState(() {
       _isLoading = true;
     });
@@ -60,6 +74,7 @@ class _MobileNumberScreenState extends State<MobileNumberScreen> {
       setState(() {
         _phoneController.text = _phoneController.text.replaceAll(' ', '');
       });
+      String baseURL = await _pref.readString(_pref.prefBaseUrl);
       final result = await _authService.sendOTP(
         context: context,
         phoneNumber: diCode + _phoneController.text,
@@ -86,6 +101,7 @@ class _MobileNumberScreenState extends State<MobileNumberScreen> {
       setState(() {
         _isLoading = false;
       });
+    }
     }
   }
 

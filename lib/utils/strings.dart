@@ -61,4 +61,7 @@ class AppStrings {
   static String personalInfo = "Personal Information";
   static String additionalInfo = "Additional Information";
   static String thankforpayment = "Thank you for your payment!";
+  static String extraInternetConnection =
+      "We're having trouble reaching the network. Check your internet connection or try again in a few minutes";
+  static String hintResendConfirmationLink = 'Resend confirmation link';
 }

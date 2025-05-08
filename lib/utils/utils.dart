@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:paniwani/utils/strings.dart';
 
+import 'comman_dialogs.dart';
 import 'responsive/responsive_flutter.dart';
 
 class Utils {
@@ -149,5 +153,33 @@ class Utils {
 
   void hideKeyboard(BuildContext context) {
     FocusScope.of(context).requestFocus(FocusNode());
+  }
+
+  Future<bool> isNetworkAvailable(
+    BuildContext? context,
+    Utils? utils, {
+    bool? showDialog,
+  }) async {
+    late List<ConnectivityResult> result;
+    final Connectivity connectivity = Connectivity();
+    try {
+      result = await connectivity.checkConnectivity();
+      utils!.loggerPrint(result);
+      if (result.contains(ConnectivityResult.wifi) ||
+          result.contains(ConnectivityResult.mobile)) {
+        return true;
+      } else {
+        if (showDialog!) {
+          dialogAlert(context!, utils, AppStrings.extraInternetConnection);
+        }
+        return false;
+      }
+    } on PlatformException catch (e) {
+      utils!.loggerPrint(e.toString());
+      if (showDialog!) {
+        dialogAlert(context!, utils, AppStrings.extraInternetConnection);
+      }
+      return false;
+    }
   }
 }

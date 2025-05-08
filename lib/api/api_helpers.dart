@@ -75,7 +75,8 @@ class APIFunction {
     try {
       SharedPref prefs = SharedPref();
       String baseURL = await prefs.readString(prefs.prefBaseUrl);
-      utils!.loggerPrint(formData);
+      utils!.loggerPrint({baseURL, "Base URL"});
+      utils.loggerPrint(formData);
       var clientInstance = await DioClient().apiClientInstance(
         context,
         baseURL,
