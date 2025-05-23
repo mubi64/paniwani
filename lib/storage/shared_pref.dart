@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class SharedPref {
   String prefKeyLoginData = 'prefKeyLoginData';
   String prefKeyEmployeeData = 'prefKeyEmployeeData';
+  String prefKeyUserData = 'prefKeyUserData';
   String prefKeyToken = 'prefKeyToken';
   String prefUserName = 'prefUserName';
   String prefPassword = 'prefPassword';

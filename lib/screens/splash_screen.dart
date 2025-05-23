@@ -4,6 +4,8 @@ import 'package:paniwani/screens/welcome_screen.dart';
 
 import '../api/services/auth_service.dart';
 import '../models/user.dart';
+import 'rider_screens/map_home_screen.dart';
+import 'rider_screens/rider_navigation_bar_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -27,7 +29,13 @@ class _SplashScreenState extends State<SplashScreen> {
     if (user != null && user.isProfileComplete) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const NavigationBarScreen()),
+        MaterialPageRoute(
+          builder:
+              (_) =>
+                  user.waterDeliveryBoy == true
+                      ? MapHomeScreen()
+                      : NavigationBarScreen(),
+        ),
       );
     } else {
       Navigator.pushReplacement(

@@ -1,5 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_credit_card/flutter_credit_card.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
+import 'package:paniwani/api/api_helpers.dart';
 import 'package:paniwani/models/cart_item.dart';
 import 'package:paniwani/screens/place_order_screen.dart';
 
@@ -47,22 +51,8 @@ class _BankCardScreenState extends State<BankCardScreen> {
             "quantity": widget.qty,
           },
         ];
-        String response = await PackageService().purchaseBottles(
-          context,
-          bottles,
-          cardNumber,
-          exMonthYear['month']!,
-          exMonthYear['year']!,
-          cvvCode,
-        );
-        utils.hideProgressDialog(context);
-        if (response != '') {
-          stripPay(exMonthYear, 1, '', bottles);
-        }
-        utils.showToast(
-          response.isNotEmpty ? response : 'Something went wrong',
-          context,
-        );
+
+        stripPay(exMonthYear, 1, '', bottles);
       } else {
         String response = await PackageService().purchasePackage(
           context,
@@ -74,10 +64,6 @@ class _BankCardScreenState extends State<BankCardScreen> {
                 },
               )
               .toList(),
-          cardNumber,
-          exMonthYear['month']!,
-          exMonthYear['year']!,
-          cvvCode,
         );
         Restaurant().clearCart();
         utils.hideProgressDialog(context);
@@ -110,9 +96,19 @@ class _BankCardScreenState extends State<BankCardScreen> {
         invoice,
         waterBottles,
       );
-      debugPrint("I need to check data: ${response['message']} ");
+      utils.hideProgressDialog(context);
       if (response != null && response['message']['status'] == 'succeeded') {
-        utils.hideProgressDialog(context);
+        if (isBottleRent == 1) {
+          utils.showProgressDialog(context, text: AppStrings.updateBottleQty);
+          String bottleResponse = await PackageService().purchaseBottles(
+            context,
+            waterBottles,
+          );
+          utils.showToast(
+            bottleResponse.isNotEmpty ? bottleResponse : 'Something went wrong',
+            context,
+          );
+        }
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
@@ -135,6 +131,7 @@ class _BankCardScreenState extends State<BankCardScreen> {
       }
     } catch (e) {
       utils.hideProgressDialog(context);
+      print('Error My print: $e');
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
@@ -161,6 +158,47 @@ class _BankCardScreenState extends State<BankCardScreen> {
     return {'month': month, 'year': year};
   }
 
+  CardFieldInputDetails? _card;
+  bool _loading = false;
+
+  Future<void> _makePayment() async {
+    setState(() => _loading = true);
+
+    try {
+      // Step 1: Create PaymentIntent on backend
+      final response = await APIFunction.postJson(
+        context,
+        utils,
+        "https://yourdomain.com/api/method/frappe_app.api.stripe_payment.create_payment_intent?amount=500",
+        {
+          'amount': 500, // Amount in cents
+          'currency': 'usd',
+          'payment_method_types[]': 'card',
+        },
+        '',
+      );
+      final data = jsonDecode(response.body);
+      final clientSecret = data['message']['client_secret'];
+
+      // Step 2: Confirm payment on client
+      await Stripe.instance.confirmPayment(
+        paymentIntentClientSecret: '$clientSecret',
+        data: PaymentMethodParams.card(paymentMethodData: PaymentMethodData()),
+      );
+
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Payment successful!")));
+    } catch (e) {
+      print(e);
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Payment failed: $e")));
+    } finally {
+      setState(() => _loading = false);
+    }
+  }
+
   @override
   void dispose() {
     super.dispose();
@@ -169,48 +207,72 @@ class _BankCardScreenState extends State<BankCardScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        foregroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text("Checkout"),
-      ),
-      body: SingleChildScrollView(
+      appBar: AppBar(title: Text("Stripe Payment")),
+      body: Padding(
+        padding: const EdgeInsets.all(20.0),
         child: Column(
           children: [
-            CreditCardWidget(
-              cardNumber: cardNumber,
-              expiryDate: expiryDate,
-              cardHolderName: cardHolderName,
-              cvvCode: cvvCode,
-              showBackView: isCvvFocused,
-              onCreditCardWidgetChange: (p0) {},
-              isHolderNameVisible: true,
+            // CardField(onCardChanged: (card) => _card = card),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: _card?.complete == true ? _makePayment : null,
+              child:
+                  _loading ? CircularProgressIndicator() : Text("Pay \$5.00"),
             ),
-            //   credit card form
-            CreditCardForm(
-              cardNumber: cardNumber,
-              expiryDate: expiryDate,
-              cardHolderName: cardHolderName,
-              cvvCode: cvvCode,
-              onCreditCardModelChange: (data) {
-                setState(() {
-                  cardNumber = data.cardNumber;
-                  expiryDate = data.expiryDate;
-                  cardHolderName = data.cardHolderName;
-                  cvvCode = data.cvvCode;
-                });
-              },
-              formKey: formKey,
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: PrimaryButton(onPressed: userTappedPay, text: 'Pay now'),
-            ),
-            SizedBox(height: 25),
           ],
         ),
       ),
     );
+    // return Scaffold(
+    //   backgroundColor: Theme.of(context).colorScheme.surface,
+    //   appBar: AppBar(
+    //     title: Text(
+    //       "Checkout",
+    //       style: TextStyle(color: Theme.of(context).colorScheme.tertiary),
+    //     ),
+    //   ),
+    //   body: SingleChildScrollView(
+    //     child: Column(
+    //       children: [
+    //         CreditCardWidget(
+    //           cardNumber: cardNumber,
+    //           expiryDate: expiryDate,
+    //           cardHolderName: cardHolderName,
+    //           cvvCode: cvvCode,
+    //           showBackView: isCvvFocused,
+    //           onCreditCardWidgetChange: (p0) {},
+    //           isHolderNameVisible: true,
+    //         ),
+    //         //   credit card form
+    //         CreditCardForm(
+    //           cardNumber: cardNumber,
+    //           expiryDate: expiryDate,
+    //           cardHolderName: cardHolderName,
+    //           cvvCode: cvvCode,
+    //           onCreditCardModelChange: (data) {
+    //             setState(() {
+    //               cardNumber = data.cardNumber;
+    //               expiryDate = data.expiryDate;
+    //               cardHolderName = data.cardHolderName;
+    //               cvvCode = data.cvvCode;
+    //             });
+    //           },
+    //           formKey: formKey,
+    //         ),
+    //         SizedBox(height: 25),
+    //         Container(
+    //           padding: const EdgeInsets.symmetric(horizontal: 8.0),
+    //           width: double.infinity,
+    //           height: 55,
+    //           child: PrimaryButton(
+    //             onPressed: userTappedPay,
+    //             text: AppStrings.payNow,
+    //           ),
+    //         ),
+    //         SizedBox(height: 25),
+    //       ],
+    //     ),
+    //   ),
+    // );
   }
 }

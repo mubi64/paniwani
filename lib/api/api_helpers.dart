@@ -43,6 +43,18 @@ class APIFunction {
       "/api/method/bottled_water_system.api.account.create_address";
   static const String customerOrder =
       "/api/method/bottled_water_system.api.order.get_customer_water_order";
+  static const String securityDeposit =
+      "/api/method/bottled_water_system.api.rent_bottles.security_return";
+  static const String deliveryOrders =
+      "/api/method/bottled_water_system.api.water_delivery_boy.get_pending_water_orders_for_delivery_boy";
+  static const String completeOrders =
+      "/api/method/bottled_water_system.api.water_delivery_boy.get_delivered_water_orders_for_delivery_boy";
+  static const String createClientSecret =
+      "/api/method/bottled_water_system.api.payment_gateway.create_client_secret";
+  static const String updateDeliveryOrder =
+      "/api/method/bottled_water_system.api.order.water_order_delivery";
+  static const String bottleReturn =
+      "/api/method/bottled_water_system.api.rent_bottles.bottle_return";
 
   static Future<dynamic> get(
     BuildContext context,
@@ -107,8 +119,7 @@ class APIFunction {
       Response response = await clientInstance.post(url, data: formData);
       return response;
     } catch (e) {
-      utils!.loggerPrint(e);
-      return;
+      return e;
     }
   }
 

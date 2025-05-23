@@ -10,6 +10,7 @@ import 'package:path_provider/path_provider.dart';
 
 import '../screens/mobile_number_screen.dart';
 import '../storage/shared_pref.dart';
+import '../utils/comman_dialogs.dart';
 import '../utils/utils.dart';
 
 class DioClient {
@@ -66,16 +67,18 @@ class DioClient {
                 (route) => false,
               );
             } else if (e.response!.data["message"] != null) {
+              utils.loggerPrint({"line 69", e.response!.data["message"]});
               utils.showToast(e.response!.data["message"].toString(), context);
             } else if (e.response!.data["exception"] != null) {
+              utils.loggerPrint({"line 71", e.response!.data["exception"]});
               utils.showToast(e.response!.data["exception"], context);
             } else {
+              utils.loggerPrint({"line 74", e.response?.statusCode});
               utils.showToast(e.response!.data['error_message'], context);
-              utils.loggerPrint(e.response?.statusCode);
             }
           } else {
-            utils.showToast(AppStrings.msgTryAgain, context);
             utils.loggerPrint(e.message);
+            utils.showToast(AppStrings.msgTryAgain, context);
           }
 
           return handler.reject(e);

@@ -70,7 +70,7 @@ class _UserInfoScreenState extends State<UserInfoScreen> {
       utils.showToast(AppStrings.selectMessage + AppStrings.gender, context);
       return;
     }
-
+    utils.showProgressDialog(context, text: AppStrings.loading);
     setState(() {
       _isLoading = true;
     });
@@ -86,6 +86,7 @@ class _UserInfoScreenState extends State<UserInfoScreen> {
       );
 
       if (result != null && mounted) {
+        utils.hideProgressDialog(context);
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(builder: (context) => SplashScreen()),
@@ -93,6 +94,7 @@ class _UserInfoScreenState extends State<UserInfoScreen> {
         );
       }
     } catch (e) {
+      utils.hideProgressDialog(context);
       if (mounted) {
         utils.showToast(AppStrings.error, context);
       }
@@ -184,9 +186,13 @@ class _UserInfoScreenState extends State<UserInfoScreen> {
                   ),
 
                   const SizedBox(height: 10),
-                  PrimaryButton(
-                    text: AppStrings.saveAndContinue,
-                    onPressed: _isLoading ? null : _saveUserInfo,
+                  SizedBox(
+                    width: double.infinity,
+                    height: 55,
+                    child: PrimaryButton(
+                      text: AppStrings.saveAndContinue,
+                      onPressed: _isLoading ? null : _saveUserInfo,
+                    ),
                   ),
                 ],
               ),

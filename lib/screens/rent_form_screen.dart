@@ -1,8 +1,11 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:paniwani/widgets/custom_dropdown.dart';
 import 'package:paniwani/widgets/custom_text_field.dart';
 
 import '../api/api_helpers.dart';
+import '../api/services/package_service.dart';
 import '../models/bottle.dart';
 import '../utils/strings.dart';
 import '../utils/utils.dart';
@@ -10,9 +13,11 @@ import '../widgets/disable_row_field.dart';
 import '../widgets/my_quantity_selector_field.dart';
 import '../widgets/primary_button.dart';
 import 'bank_card_screen.dart';
+import 'navigation_bar_screen.dart';
 
 class RentFormScreen extends StatefulWidget {
-  const RentFormScreen({super.key});
+  bool isSecurityReturn;
+  RentFormScreen({super.key, this.isSecurityReturn = false});
 
   @override
   State<RentFormScreen> createState() => _RentFormScreenState();
@@ -26,6 +31,81 @@ class _RentFormScreenState extends State<RentFormScreen> {
   int bottleQuantity = 1;
   Bottle? _selectedBottle;
   bool loading = true;
+
+  String? paymentIntent;
+
+  Future<void> makePayment(price, String currency) async {
+    try {
+      paymentIntent = await createPaymentIntent(price, currency);
+      utils.hideProgressDialog(context);
+      await Stripe.instance.initPaymentSheet(
+        paymentSheetParameters: SetupPaymentSheetParameters(
+          customFlow: false,
+          merchantDisplayName: 'Paniwani',
+          paymentIntentClientSecret: paymentIntent,
+          googlePay: PaymentSheetGooglePay(
+            merchantCountryCode: 'PK',
+            currencyCode: currency,
+            testEnv: true,
+          ),
+        ),
+      );
+
+      await displayPaymentSheet();
+    } catch (e) {
+      print('error on line 46: ${e.toString()}');
+    }
+  }
+
+  createPaymentIntent(double amount, String currency) async {
+    try {
+      var formData = {'amount': amount * 100, 'currency': currency};
+
+      var response = await APIFunction.postJson(
+        context,
+        utils,
+        APIFunction.createClientSecret,
+        formData,
+        '',
+      );
+      print('maira response : $response');
+      if (response != null) {
+        return response.data['message'];
+      } else {
+        utils.showToast(response.data['message'], context);
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  displayPaymentSheet() async {
+    try {
+      await Stripe.instance.presentPaymentSheet();
+      utils.showProgressDialog(context);
+      List waterBottles = [
+        {
+          "water_bottle_product": _selectedBottle!.name.toString(),
+          "quantity": bottleQuantity,
+        },
+      ];
+      String bottleResponse = await PackageService().purchaseBottles(
+        context,
+        waterBottles,
+      );
+      utils.hideProgressDialog(context);
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => NavigationBarScreen()),
+      );
+      await Stripe.instance.confirmPaymentSheetPayment();
+      paymentIntent = null;
+    } on StripeException catch (e) {
+      print(e.toString());
+    } catch (e) {
+      print(e.toString());
+    }
+  }
 
   void updateQuantity(String value) {
     final enteredQty = int.tryParse(value) ?? 1;
@@ -79,7 +159,7 @@ class _RentFormScreenState extends State<RentFormScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Rent Form")),
+      appBar: AppBar(title: Text(AppStrings.bottleRent)),
       body: Column(
         children: [
           Expanded(
@@ -157,10 +237,15 @@ class _RentFormScreenState extends State<RentFormScreen> {
               ],
             ),
           ),
-          Padding(
+          Container(
+            width: double.infinity,
+            height: 55,
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: PrimaryButton(
-              text: 'Pay',
+              text:
+                  widget.isSecurityReturn
+                      ? AppStrings.securityReturn
+                      : AppStrings.pay,
               onPressed: () {
                 if (_selectedBottle == null) {
                   utils.showToast(
@@ -169,15 +254,21 @@ class _RentFormScreenState extends State<RentFormScreen> {
                   );
                   return;
                 }
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder:
-                        (context) => BankCardScreen(
-                          bottle: _selectedBottle,
-                          qty: int.parse(quantityController.text),
-                        ),
-                  ),
+                // Navigator.push(
+                //   context,
+                //   MaterialPageRoute(
+                //     builder:
+                //         (context) => BankCardScreen(
+                //           bottle: _selectedBottle,
+                //           qty: int.parse(quantityController.text),
+                //         ),
+                //   ),
+                // );
+                utils.showProgressDialog(context);
+                makePayment(
+                  double.parse(_selectedBottle!.price.toString()) *
+                      double.parse(quantityController.text),
+                  _selectedBottle!.currency.toString(),
                 );
               },
             ),

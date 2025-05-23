@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../models/restaurant.dart';
 import '../utils/strings.dart';
@@ -47,58 +48,111 @@ class _OrdersScreenState extends State<OrdersScreen> {
                 );
               } else {
                 final order = orders[index];
-                return Card(
-                  margin: const EdgeInsets.only(bottom: 16),
-                  child: ListTile(
-                    contentPadding: const EdgeInsets.all(16),
-                    title: Text(
-                      'Order #${order.name}',
-                      style: Theme.of(context).textTheme.titleMedium,
-                    ),
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(height: 8),
-                        Text('Date: ${order.deliveryDate}'),
-                        Text('Bundle: ${order.bottleType}'),
-                        const SizedBox(height: 8),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 4,
+                return Container(
+                  padding: EdgeInsets.all(16),
+                  margin: EdgeInsets.symmetric(vertical: 8),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.secondary,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  '${AppStrings.order} #${order.name}',
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 1,
+                                  style: TextStyle(
+                                    color:
+                                        Theme.of(
+                                          context,
+                                        ).colorScheme.tertiaryFixedDim,
+                                  ),
+                                ),
+                                Text(
+                                  DateFormat('MMM dd, yyyy')
+                                      .format(
+                                        DateTime.parse(
+                                          order.deliveryDate.toString(),
+                                        ),
+                                      )
+                                      .toString(),
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                              ],
+                            ),
                           ),
-                          decoration: BoxDecoration(
-                            color:
-                                order.status == 'Delivered'
-                                    ? Colors.green.shade100
-                                    : Colors.orange.shade100,
-                            borderRadius: BorderRadius.circular(16),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 8.0),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 4,
+                              ),
+                              decoration: BoxDecoration(
+                                color:
+                                    order.status == 'Delivered'
+                                        ? Colors.green.shade100
+                                        : Colors.orange.shade100,
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              child: Text(
+                                '${order.status}',
+                                style: TextStyle(
+                                  color:
+                                      order.status == 'Delivered'
+                                          ? Colors.green.shade800
+                                          : Colors.orange.shade800,
+                                ),
+                              ),
+                            ),
                           ),
-                          child: Text(
-                            '${order.status}',
+                        ],
+                      ),
+                      Divider(
+                        color: Theme.of(context).colorScheme.tertiaryFixedDim,
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '${order.customer}',
                             style: TextStyle(
                               color:
-                                  order.status == 'Delivered'
-                                      ? Colors.green.shade800
-                                      : Colors.orange.shade800,
+                                  Theme.of(
+                                    context,
+                                  ).colorScheme.tertiaryFixedDim,
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                    trailing: IconButton(
-                      icon: const Icon(Icons.chevron_right),
-                      onPressed: () {
-                        // Show order details
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                              "View details for Order #${order.name}",
+                          Text(
+                            '${order.bottleType}',
+                            style: TextStyle(
+                              color:
+                                  Theme.of(
+                                    context,
+                                  ).colorScheme.tertiaryFixedDim,
                             ),
                           ),
-                        );
-                      },
-                    ),
+                          Text(
+                            '${order.address}',
+                            style: TextStyle(
+                              color:
+                                  Theme.of(
+                                    context,
+                                  ).colorScheme.tertiaryFixedDim,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                 );
               }

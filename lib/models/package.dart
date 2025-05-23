@@ -1,24 +1,24 @@
 import '../utils/utils.dart';
 
 class Package {
-  String name;
-  String packageName;
-  double bottleQuantity;
-  String item;
+  String? name;
+  String? packageName;
+  double? bottleQuantity;
+  String? item;
   String? description;
-  double price;
-  String image;
-  String currency;
+  double? price;
+  String? image;
+  String? currency;
 
   Package({
-    required this.name,
-    required this.packageName,
-    required this.bottleQuantity,
-    required this.item,
+    this.name,
+    this.packageName,
+    this.bottleQuantity,
+    this.item,
     this.description = "",
-    required this.price,
-    required this.image,
-    required this.currency,
+    this.price,
+    this.image,
+    this.currency,
   });
 
   factory Package.fromJson(Map<String, dynamic> json) {
@@ -47,4 +47,3 @@ class Package {
     };
   }
 }
-

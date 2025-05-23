@@ -5,13 +5,27 @@ import 'package:paniwani/api/services/auth_service.dart';
 import 'package:paniwani/models/address.dart';
 import 'package:paniwani/models/customer_bottle.dart';
 import '../api/services/address_service.dart';
+import '../api/services/delivery_order_service.dart';
 import '../api/services/package_service.dart';
 import 'cart_item.dart';
 import 'customer_order.dart';
+import 'delivery_order.dart';
 import 'package.dart';
 import 'purchased_package.dart';
+import 'user.dart';
 
 class Restaurant extends ChangeNotifier {
+  User? _currentUser;
+
+  // Getter for cached user only
+  User? get currentUser => _currentUser;
+
+  // Fetches user info (and sets _currentUser)
+  Future<void> getCurrentUser(BuildContext context) async {
+    _currentUser = await AuthService().getUserInfo(context);
+    notifyListeners();
+  }
+
   List<Package> _menu = [];
   /* G E T T E R S */
   List<Package> get menu => _menu;
@@ -72,9 +86,9 @@ class Restaurant extends ChangeNotifier {
   double getTotalPrice() {
     double total = 0.0;
     for (CartItem cartItem in _cart) {
-      double itemTotal = cartItem.package.price;
+      double? itemTotal = cartItem.package.price;
 
-      total += itemTotal * cartItem.quantity;
+      total += (itemTotal ?? 0.0) * cartItem.quantity;
     }
     return total;
   }
@@ -82,7 +96,10 @@ class Restaurant extends ChangeNotifier {
   // get total price with currency... currency is in package
   String getTotalPriceWithCurrency() {
     double total = getTotalPrice();
-    String currency = _cart.isNotEmpty ? _cart[0].package.currency : '';
+    String currency =
+        _cart.isNotEmpty
+            ? _cart[0].package.currency ?? ""
+            : ""; // Default to USD if no items in cart
     return "$currency ${total.toStringAsFixed(2)}";
   }
 
@@ -119,7 +136,7 @@ class Restaurant extends ChangeNotifier {
 
     for (final cartItem in _cart) {
       receipt.writeln(
-        "${cartItem.quantity} x ${cartItem.package.name} - ${_formatePrice(cartItem.package.price)}",
+        "${cartItem.quantity} x ${cartItem.package.name} - ${_formatePrice(cartItem.package.price ?? 00.00)}",
       );
       receipt.writeln();
     }
@@ -212,6 +229,27 @@ class Restaurant extends ChangeNotifier {
   ) async {
     await PackageService().placeOrder(context, package, qty, ddate, address);
     await fetchPurchasedPackages(context);
+    notifyListeners();
+  }
+
+  List<DeliveryOrder> _deliveryOrder = [];
+  List<DeliveryOrder> get deliveryOrder => _deliveryOrder;
+  bool isLoadingDeliveryOrder = true;
+  Future<void> fetchDeliveryOrders(BuildContext context) async {
+    isLoadingDeliveryOrder = true;
+    notifyListeners();
+    _deliveryOrder = await DeliveryOrderService().getDeliveryOrders(context);
+    notifyListeners();
+    isLoadingDeliveryOrder = false;
+    notifyListeners();
+  }
+
+  Future<void> fetchCompleteOrders(BuildContext context) async {
+    isLoadingDeliveryOrder = true;
+    notifyListeners();
+    _deliveryOrder = await DeliveryOrderService().getCompleteOrders(context);
+    notifyListeners();
+    isLoadingDeliveryOrder = false;
     notifyListeners();
   }
 }

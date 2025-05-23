@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:paniwani/api/services/auth_service.dart';
 
 import '../screens/bottle_rent_screen.dart';
+import '../screens/profile_screen.dart';
+import '../screens/rider_screens/rider_home_screen.dart';
+import '../screens/security_return_screen.dart';
 import 'my_drawer_tile.dart';
 
 class MyDrawer extends StatefulWidget {
@@ -12,11 +14,6 @@ class MyDrawer extends StatefulWidget {
 }
 
 class _MyDrawerState extends State<MyDrawer> {
-  void logout() async {
-    final authService = AuthService();
-    await authService.logout(context);
-  }
-
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -38,27 +35,56 @@ class _MyDrawerState extends State<MyDrawer> {
             child: Divider(color: Theme.of(context).colorScheme.secondary),
           ),
           // setting
+          // MyDrawerTile(
+          //   text: "R E N T A L",
+          //   icon: Icons.attach_money_rounded,
+          //   onTap: () {
+          //     Navigator.pop(context);
+          //     Navigator.push(
+          //       context,
+          //       MaterialPageRoute(
+          //         builder: (context) => const BottleRentScreen(),
+          //       ),
+          //     );
+          //   },
+          // ),
+          // MyDrawerTile(
+          //   text: "R E T U R N",
+          //   icon: Icons.change_circle_rounded,
+          //   onTap: () {
+          //     Navigator.pop(context);
+          //     Navigator.push(
+          //       context,
+          //       MaterialPageRoute(
+          //         builder: (context) => const SecurityReturnScreen(),
+          //       ),
+          //     );
+          //   },
+          // ),
           MyDrawerTile(
-            text: "R E N T A L",
-            icon: Icons.attach_money_rounded,
+            text: "P R O F I L E",
+            icon: Icons.person_rounded,
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const ProfileScreen()),
+              );
+            },
+          ),
+          MyDrawerTile(
+            text: "O R D E R S",
+            icon: Icons.local_shipping_rounded,
             onTap: () {
               Navigator.pop(context);
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const BottleRentScreen(),
+                  builder: (context) => RiderHomeScreen(completeOrderScreen: 1),
                 ),
               );
             },
           ),
-          Spacer(),
-          // log out
-          MyDrawerTile(
-            text: "L O G O U T",
-            icon: Icons.logout,
-            onTap: () => logout,
-          ),
-          SizedBox(height: 25),
         ],
       ),
     );

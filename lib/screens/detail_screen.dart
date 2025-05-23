@@ -46,7 +46,7 @@ class _DetailScreenState extends State<DetailScreen> {
                     children: [
                       // food name
                       Text(
-                        widget.package.item,
+                        widget.package.item.toString(),
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,

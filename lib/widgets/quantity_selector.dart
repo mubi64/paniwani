@@ -28,9 +28,9 @@ class QuantitySelector extends StatelessWidget {
           GestureDetector(
             onTap: onDecrement,
             child: Icon(
-              Icons.remove,
+              quantity == 1 ? Icons.delete_outline_rounded : Icons.remove,
               size: 20,
-              color: Theme.of(context).colorScheme.primary,
+              color: Theme.of(context).colorScheme.tertiary,
             ),
           ),
           Padding(
@@ -45,7 +45,7 @@ class QuantitySelector extends StatelessWidget {
                 key: ValueKey<int>(quantity), // Important for animation
                 style: TextStyle(
                   fontSize: 20,
-                  color: Theme.of(context).colorScheme.primary,
+                  color: Theme.of(context).colorScheme.tertiary,
                 ),
               ),
             ),
@@ -56,7 +56,7 @@ class QuantitySelector extends StatelessWidget {
             child: Icon(
               Icons.add,
               size: 20,
-              color: Theme.of(context).colorScheme.primary,
+              color: Theme.of(context).colorScheme.tertiary,
             ),
           ),
         ],

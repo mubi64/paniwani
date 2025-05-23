@@ -22,12 +22,10 @@ class CustomTextField extends StatelessWidget {
       spacing: 4,
       children: [
         Padding(
-          padding: const EdgeInsets.only(left: 8.0),
+          padding: const EdgeInsets.only(left: 2.0),
           child: Text(
             labelText.toString(),
-            style: TextStyle(
-              color: Theme.of(context).colorScheme.inversePrimary,
-            ),
+            style: TextStyle(color: Theme.of(context).colorScheme.tertiary),
           ),
         ),
         TextFormField(
@@ -38,7 +36,7 @@ class CustomTextField extends StatelessWidget {
             fillColor: Theme.of(context).colorScheme.secondary,
             contentPadding: const EdgeInsets.symmetric(horizontal: 20),
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(30),
+              borderRadius: BorderRadius.circular(10),
               borderSide: BorderSide.none,
             ),
           ),

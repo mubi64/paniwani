@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 import '../api/services/address_service.dart';
 import '../models/address.dart';
 import '../models/restaurant.dart';
+import '../utils/strings.dart';
 import '../widgets/address_box.dart';
 import '../widgets/custom_date_picker.dart';
 import '../widgets/disable_row_field.dart';
@@ -51,6 +52,7 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
       selectedIndex = addresses.indexWhere(
         (address) => address.isShippingAddress == 1,
       );
+      selectedIndex = selectedIndex < 0 ? 0 : selectedIndex;
       selectedAddress = addresses[selectedIndex];
     }
     setState(() {});
@@ -58,14 +60,14 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
 
   void updateQuantity(String value) {
     final enteredQty = int.tryParse(value) ?? 1;
-    if (enteredQty <= widget.package.bottlesRemaining) {
+    if (enteredQty <= (widget.package.bottlesRemaining ?? 0)) {
       setState(() {
         bottleQuantity = enteredQty;
       });
     } else {
       // Reset to max allowed
       setState(() {
-        bottleQuantity = widget.package.bottlesRemaining;
+        bottleQuantity = (widget.package.bottlesRemaining ?? 0);
         quantityController.text = widget.package.bottlesRemaining.toString();
       });
       utils.showToast(
@@ -268,7 +270,7 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
     try {
       await Restaurant().orderPlace(
         context,
-        widget.package.name,
+        widget.package.name.toString(),
         bottleQuantity,
         deliveryDateController.text,
         selectedAddress.name.toString(),
@@ -297,10 +299,20 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Order Place',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              AppStrings.orderPlace,
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).colorScheme.tertiary,
+              ),
             ),
-            Text(widget.package.item, style: TextStyle(fontSize: 12)),
+            Text(
+              widget.package.item.toString(),
+              style: TextStyle(
+                fontSize: 12,
+                color: Theme.of(context).colorScheme.tertiary,
+              ),
+            ),
           ],
         ),
         backgroundColor: Colors.transparent,
@@ -314,8 +326,14 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                 spacing: 12,
                 children: [
                   AddressBox(
-                    addressTitle: selectedAddress.name.toString(),
-                    addressDetails: selectedAddress.addressLine1.toString(),
+                    addressTitle:
+                        selectedAddress.name != null
+                            ? selectedAddress.name.toString()
+                            : AppStrings.address,
+                    addressDetails:
+                        selectedAddress.addressLine1 != null
+                            ? selectedAddress.addressLine1.toString()
+                            : AppStrings.selectAddress,
                     onEditPressed: showAddressBottomSheet,
                   ),
                   DisableRowField(
@@ -337,7 +355,8 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                       }
                     },
                     increaseQuantity: () {
-                      if (bottleQuantity < widget.package.bottlesRemaining) {
+                      if (bottleQuantity <
+                          (widget.package.bottlesRemaining ?? 0)) {
                         setState(() {
                           bottleQuantity++;
                           quantityController.text = bottleQuantity.toString();
@@ -356,10 +375,7 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
 
                   // Editable field: delivery_date (Date picker)
                   Padding(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 8.0,
-                      horizontal: 16,
-                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: CustomDatePicker(
                       controller: deliveryDateController,
                       hintText: 'Delivery Date',
@@ -372,13 +388,11 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
             ),
           ),
 
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 25),
-            child: Column(
-              children: [
-                PrimaryButton(onPressed: _placeOrder, text: "Place Order"),
-              ],
-            ),
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            width: double.infinity,
+            height: 55,
+            child: PrimaryButton(onPressed: _placeOrder, text: "Place Order"),
           ),
           SizedBox(height: 25),
         ],

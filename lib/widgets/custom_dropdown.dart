@@ -24,12 +24,10 @@ class CustomDropdown<T> extends StatelessWidget {
       spacing: 4,
       children: [
         Padding(
-          padding: const EdgeInsets.only(left: 8.0),
+          padding: const EdgeInsets.only(left: 2.0),
           child: Text(
             hintText.toString(),
-            style: TextStyle(
-              color: Theme.of(context).colorScheme.inversePrimary,
-            ),
+            style: TextStyle(color: Theme.of(context).colorScheme.tertiary),
           ),
         ),
 
@@ -37,7 +35,7 @@ class CustomDropdown<T> extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 20),
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.secondary,
-            borderRadius: BorderRadius.circular(30),
+            borderRadius: BorderRadius.circular(10),
           ),
           child: DropdownButtonFormField<T>(
             value: selectedValue,

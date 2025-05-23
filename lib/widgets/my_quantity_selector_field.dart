@@ -22,28 +22,21 @@ class MyQuantitySelectorField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       spacing: 10,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Align(
-            alignment: Alignment.centerLeft,
-            child: Padding(
-              padding: EdgeInsets.only(left: 8.0),
-              child: Text(
-                label,
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.inversePrimary,
-                ),
-              ),
-            ),
+          padding: EdgeInsets.only(left: 12.0),
+          child: Text(
+            label,
+            style: TextStyle(color: Theme.of(context).colorScheme.tertiary),
           ),
         ),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 10),
-          margin: const EdgeInsets.symmetric(horizontal: 16),
+          margin: const EdgeInsets.symmetric(horizontal: 8),
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.secondary,
-            borderRadius: BorderRadius.circular(30),
+            borderRadius: BorderRadius.circular(10),
           ),
           child: Row(
             children: [

@@ -67,7 +67,7 @@ class _MyCartTileState extends State<MyCartTile> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            widget.cartItem.package.name,
+                            widget.cartItem.package.item.toString(),
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
                               fontSize: 16,
@@ -78,7 +78,7 @@ class _MyCartTileState extends State<MyCartTile> {
                             '${widget.cartItem.package.currency} ${widget.cartItem.package.price}',
                             style: TextStyle(
                               fontSize: 14,
-                              color: Theme.of(context).colorScheme.primary,
+                              color: Theme.of(context).colorScheme.tertiary,
                             ),
                           ),
                           SizedBox(height: 10),

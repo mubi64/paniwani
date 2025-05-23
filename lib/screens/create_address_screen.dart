@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:paniwani/api/services/address_service.dart';
 import 'package:paniwani/widgets/primary_button.dart';
@@ -27,6 +29,49 @@ class _CreateAddressScreenState extends State<CreateAddressScreen> {
   TextEditingController country = TextEditingController(text: '');
   double? latitude;
   double? longitude;
+  LatLng? selectedLocation;
+
+  @override
+  void initState() {
+    super.initState();
+    _getCurrentLocation();
+  }
+
+  Future<void> _getCurrentLocation() async {
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) return;
+
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied ||
+        permission == LocationPermission.deniedForever) {
+      permission = await Geolocator.requestPermission();
+      if (permission != LocationPermission.whileInUse &&
+          permission != LocationPermission.always)
+        return;
+    }
+
+    Position position = await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high,
+    );
+
+    setState(() {
+      selectedLocation = LatLng(position.latitude, position.longitude);
+
+      latitude = selectedLocation?.latitude;
+      longitude = selectedLocation?.longitude;
+    });
+    List<Placemark> placemarks = await placemarkFromCoordinates(
+      selectedLocation!.latitude,
+      selectedLocation!.longitude,
+    );
+    if (placemarks.isNotEmpty) {
+      final place = placemarks.first;
+      setState(() {
+        city.text = place.locality.toString();
+        country.text = place.country.toString();
+      });
+    }
+  }
 
   void _pickLocationFromMap() async {
     final pickedLocation = await Navigator.push(
@@ -74,7 +119,7 @@ class _CreateAddressScreenState extends State<CreateAddressScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Create Address")),
+      appBar: AppBar(title: Text(AppStrings.createAddress)),
       body: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
         child: Column(
@@ -116,6 +161,7 @@ class _CreateAddressScreenState extends State<CreateAddressScreen> {
                           }
                           return null;
                         },
+                        enabled: false,
                       ),
                       CustomTextField(
                         controller: country,
@@ -126,20 +172,24 @@ class _CreateAddressScreenState extends State<CreateAddressScreen> {
                           }
                           return null;
                         },
+                        enabled: false,
                       ),
                       const SizedBox(height: 16),
                       Row(
                         children: [
-                          Expanded(
-                            child: Text(
-                              latitude == null || longitude == null
-                                  ? "No location selected"
-                                  : "Lat: $latitude\nLng: $longitude",
-                            ),
-                          ),
+                          Expanded(child: Container()),
                           ElevatedButton.icon(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor:
+                                  Theme.of(context).colorScheme.secondary,
+                            ),
                             icon: Icon(Icons.map),
-                            label: Text("Pick from Map"),
+                            label: Text(
+                              "Pick from Map",
+                              style: TextStyle(
+                                color: Theme.of(context).colorScheme.tertiary,
+                              ),
+                            ),
                             onPressed: _pickLocationFromMap,
                           ),
                         ],
@@ -150,7 +200,14 @@ class _CreateAddressScreenState extends State<CreateAddressScreen> {
                 ),
               ),
             ),
-            PrimaryButton(onPressed: _submit, text: "Create Address"),
+            SizedBox(
+              width: double.infinity,
+              height: 55,
+              child: PrimaryButton(
+                onPressed: _submit,
+                text: AppStrings.createAddress,
+              ),
+            ),
             SizedBox(height: 25),
           ],
         ),

@@ -1,24 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:paniwani/screens/home_screen.dart';
 import 'package:paniwani/screens/orders_screen.dart';
 import 'package:paniwani/screens/profile_screen.dart';
 import 'package:paniwani/utils/strings.dart';
-import 'package:paniwani/widgets/my_drawer.dart';
 
-import '../api/services/auth_service.dart';
-import '../widgets/custom_appbar.dart';
-import 'cart_screen.dart';
-import 'place_order_screen.dart';
+import '../../api/services/auth_service.dart';
+import '../../widgets/custom_appbar.dart';
+import 'rider_home_screen.dart';
 
-class NavigationBarScreen extends StatefulWidget {
+class RiderNavigationBarScreen extends StatefulWidget {
   final int initialIndex;
-  const NavigationBarScreen({super.key, this.initialIndex = 0});
+  const RiderNavigationBarScreen({super.key, this.initialIndex = 0});
 
   @override
-  State<NavigationBarScreen> createState() => _NavigationBarScreenState();
+  State<RiderNavigationBarScreen> createState() =>
+      _RiderNavigationBarScreenState();
 }
 
-class _NavigationBarScreenState extends State<NavigationBarScreen> {
+class _RiderNavigationBarScreenState extends State<RiderNavigationBarScreen> {
   final AuthService _authService = AuthService();
   int _selectedIndex = 0;
 
@@ -39,23 +37,18 @@ class _NavigationBarScreenState extends State<NavigationBarScreen> {
   final icons = [
     Icons.home_outlined,
     Icons.assignment_outlined,
-    // Icons.shopping_cart_outlined,
     Icons.person_outline,
   ];
 
-  final labels = [
-    AppStrings.home,
-    AppStrings.orders,
-    // AppStrings.cart,
-    AppStrings.profile,
-  ];
+  final labels = [AppStrings.home, AppStrings.orders, AppStrings.profile];
 
-  final List<Widget> _screens = [
-    HomeScreen(),
-    OrdersScreen(),
-    // CartScreen(),
-    ProfileScreen(),
-  ];
+  List<Widget> get _screens {
+    return [
+      RiderHomeScreen(key: UniqueKey()),
+      RiderHomeScreen(key: UniqueKey(), completeOrderScreen: 1),
+      ProfileScreen(key: UniqueKey()),
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {

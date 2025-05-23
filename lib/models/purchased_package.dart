@@ -1,28 +1,28 @@
 class PurchasedPackage {
-  String name;
-  String customer;
-  String bottlePackage;
-  String item;
-  String status;
-  String purchaseDate;
-  int bottlesPurchased;
-  int bottlesRemaining;
-  String bottleType;
-  String waterBottleProduct;
-  int bottlesOrdered;
+  String? name;
+  String? customer;
+  String? bottlePackage;
+  String? item;
+  String? status;
+  String? purchaseDate;
+  int? bottlesPurchased;
+  int? bottlesRemaining;
+  String? bottleType;
+  String? waterBottleProduct;
+  int? bottlesOrdered;
 
   PurchasedPackage({
-    required this.name,
-    required this.customer,
-    required this.bottlePackage,
-    required this.item,
-    required this.status,
-    required this.purchaseDate,
-    required this.bottlesPurchased,
-    required this.bottlesRemaining,
-    required this.bottleType,
-    required this.waterBottleProduct,
-    required this.bottlesOrdered,
+    this.name,
+    this.customer,
+    this.bottlePackage,
+    this.item,
+    this.status,
+    this.purchaseDate,
+    this.bottlesPurchased,
+    this.bottlesRemaining,
+    this.bottleType,
+    this.waterBottleProduct,
+    this.bottlesOrdered,
   });
 
   factory PurchasedPackage.fromJson(Map<String, dynamic> json) {

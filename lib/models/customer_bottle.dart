@@ -1,24 +1,24 @@
 import '../utils/utils.dart';
 
 class CustomerBottle {
-  String name;
-  String waterBottleProduct;
-  double availableQuantity;
-  double companyHand;
-  double customerHand;
-  String bottleType;
-  String item;
-  double price;
+  String? name;
+  String? waterBottleProduct;
+  double? availableQuantity;
+  double? companyHand;
+  double? customerHand;
+  String? bottleType;
+  String? item;
+  double? price;
 
   CustomerBottle({
-    required this.name,
-    required this.waterBottleProduct,
-    required this.availableQuantity,
-    required this.companyHand,
-    required this.customerHand,
-    required this.bottleType,
-    required this.item,
-    required this.price,
+    this.name,
+    this.waterBottleProduct,
+    this.availableQuantity,
+    this.companyHand,
+    this.customerHand,
+    this.bottleType,
+    this.item,
+    this.price,
   });
 
   factory CustomerBottle.fromJson(Map<String, dynamic> json) {

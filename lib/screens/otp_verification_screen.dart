@@ -112,11 +112,12 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
         context: context,
         phoneNumber: widget.phoneNumber,
       );
+      for (var controller in _otpControllers) {
+        controller.clear();
+      }
       _startTimer();
     } catch (e) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text(AppStrings.error)));
+      utils.showToast(AppStrings.error, context);
     } finally {
       setState(() {
         _isLoading = false;
@@ -203,9 +204,13 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                   ),
                 ),
                 SizedBox(height: 24),
-                PrimaryButton(
-                  text: AppStrings.verifyOtp,
-                  onPressed: _isLoading ? null : _verifyOtp,
+                SizedBox(
+                  width: double.infinity,
+                  height: 55,
+                  child: PrimaryButton(
+                    text: AppStrings.verifyOtp,
+                    onPressed: _isLoading ? null : _verifyOtp,
+                  ),
                 ),
               ],
             ),
@@ -222,42 +227,48 @@ class OtpBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(2.0),
-      child: Container(
-        width: 50,
-        height: 50,
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          border: Border.all(
-            color: Theme.of(context).colorScheme.inversePrimary,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        double size =
+            (constraints.maxWidth < 300) ? constraints.maxWidth / 8 : 50;
+        return Padding(
+          padding: const EdgeInsets.all(2.0),
+          child: Container(
+            width: size,
+            height: size,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: Theme.of(context).colorScheme.inversePrimary,
+              ),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: TextField(
+              textAlign: TextAlign.center,
+              keyboardType: TextInputType.number,
+              maxLength: 1,
+              decoration: const InputDecoration(
+                counterText: '',
+                border: InputBorder.none,
+              ),
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              inputFormatters: [
+                FilteringTextInputFormatter.digitsOnly,
+                LengthLimitingTextInputFormatter(1),
+              ],
+              controller: controller,
+              onChanged: (value) {
+                if (value.length == 1) {
+                  FocusScope.of(context).nextFocus();
+                }
+                if (value.isEmpty) {
+                  FocusScope.of(context).previousFocus();
+                }
+              },
+            ),
           ),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: TextField(
-          textAlign: TextAlign.center,
-          keyboardType: TextInputType.number,
-          maxLength: 1,
-          decoration: const InputDecoration(
-            counterText: '',
-            border: InputBorder.none,
-          ),
-          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          inputFormatters: [
-            FilteringTextInputFormatter.digitsOnly,
-            LengthLimitingTextInputFormatter(1),
-          ],
-          controller: controller,
-          onChanged: (value) {
-            if (value.length == 1) {
-              FocusScope.of(context).nextFocus();
-            }
-            if (value.isEmpty) {
-              FocusScope.of(context).previousFocus();
-            }
-          },
-        ),
-      ),
+        );
+      },
     );
   }
 }

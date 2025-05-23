@@ -88,7 +88,7 @@ Widget commonButton({
           textAlignNew: TextAlign.center,
           textStyleNew: MyTextStyle(
             size: ResponsiveFlutter.of(context).fontSize(fontSize!),
-            color: Theme.of(context).colorScheme.secondary,
+            color: Colors.white,
             fontWeight: fontWeight,
           ),
           isMaxLineWrap: true,

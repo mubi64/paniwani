@@ -5,6 +5,7 @@ class AddressBox extends StatelessWidget {
   String addressDetails;
   Function()? onEditPressed;
   AddressBox({
+    super.key,
     required this.addressTitle,
     required this.addressDetails,
     this.onEditPressed,
@@ -26,14 +27,14 @@ class AddressBox extends StatelessWidget {
             children: [
               Icon(
                 Icons.location_on_rounded,
-                color: Theme.of(context).colorScheme.inversePrimary,
+                color: Theme.of(context).colorScheme.tertiary,
               ),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
                   "Delivery Address",
                   style: TextStyle(
-                    color: Theme.of(context).colorScheme.inversePrimary,
+                    color: Theme.of(context).colorScheme.tertiary,
                     fontSize: 18,
                     fontWeight: FontWeight.w900,
                   ),
@@ -43,21 +44,21 @@ class AddressBox extends StatelessWidget {
               IconButton(
                 icon: Icon(
                   Icons.edit_rounded,
-                  color: Theme.of(context).colorScheme.inversePrimary,
+                  color: Theme.of(context).colorScheme.tertiary,
                 ),
                 onPressed: onEditPressed,
               ),
             ],
           ),
           Divider(
-            color: Theme.of(context).colorScheme.primary,
+            color: Theme.of(context).colorScheme.tertiaryFixedDim,
             thickness: 1,
             height: 20,
           ),
           Text(
             addressTitle,
             style: TextStyle(
-              color: Theme.of(context).colorScheme.inversePrimary,
+              color: Theme.of(context).colorScheme.tertiary,
               fontSize: 17,
               fontWeight: FontWeight.w900,
             ),
@@ -65,7 +66,7 @@ class AddressBox extends StatelessWidget {
           Text(
             addressDetails,
             style: TextStyle(
-              color: Theme.of(context).colorScheme.inversePrimary,
+              color: Theme.of(context).colorScheme.tertiaryFixedDim,
             ),
           ),
         ],

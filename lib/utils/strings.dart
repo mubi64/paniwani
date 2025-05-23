@@ -25,6 +25,7 @@ class AppStrings {
   static const profile = "Profile";
   static const activeBundles = "Active Bundles";
   static const placeOrder = "Place Order";
+  static const orderPlace = "Order Place";
   static const availableBundles = "Available Bundles";
   static const home = "Home";
   static const loading = "Loading...";
@@ -42,6 +43,7 @@ class AppStrings {
   static const enterValid = "Please enter a valid";
   static const leftbottles = "bottles left";
   static const bottle = "Bottle";
+  static String bottles = "Bottles";
   static String btnOk = "OK";
   static String btnYes = "Yes";
   static String btnNo = "No";
@@ -64,4 +66,46 @@ class AppStrings {
   static String extraInternetConnection =
       "We're having trouble reaching the network. Check your internet connection or try again in a few minutes";
   static String hintResendConfirmationLink = 'Resend confirmation link';
+  static String address = "Address";
+  static String selectAddress = "Please Select Address";
+  static String noActivePackages = "No Active Packages";
+  static String noProductsAvailable = "No Products Available";
+  static String bottleType = "Bottle Type";
+  static String updateBottleQty = "Update Bottle Quantity";
+  static String availableQty = "Available Quantity";
+  static String companyHand = "Company Hand";
+  static String customerHand = "Customer Hand";
+  static String price = "Price ";
+  static String noBottlesAvailable = "No Bottles Available";
+  static String bottleRent = "Bottle Rental";
+  static String cart = "Cart";
+  static String clearCartConfirmation =
+      "Are you sure you want to clear the cart?";
+  static String cartEmpty = "Cart is empty";
+  static String securityReturn = "Security Return";
+  static String pay = "Pay";
+  static String purchase = "Purchase";
+  static String promossionMessage = "Stay Hydrated!";
+  static String your = "Your";
+  static String order = "Order";
+  static String quickActions = "Quick Actions";
+  static String orderWater = "Order Water";
+  static String rentBottle = "Rent Bottle";
+  static String viewAll = "View All";
+  static String recentOrders = "Recent Orders";
+  static String noPackageFound = "No Package Found";
+  static String createAddress = "Create Address";
+  static String payNow = "Pay now";
+  static String welcomeBack = "Welcome back";
+  static String hello = "Hello";
+  static String couldNotOpenGoogleMaps = 'Could not open Google Maps';
+  static String delivered = 'Delivered';
+  static String noOrdersFound = 'No delivery orders available';
+  static String completeOrders = 'Complete Orders';
+  static String orderDate = 'Order Date';
+  static String ordered = 'Ordered';
+  static String deliveryDate = 'Delivery Date';
+  static String deliveredQty = "Delivered Quantity";
+  static String receivedQty = "Received Quantity";
+  static String received = 'Received';
 }

@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:paniwani/storage/shared_pref.dart';
 
 import '../../models/user.dart';
 import '../../utils/utils.dart';
@@ -103,14 +105,20 @@ class AuthService extends ChangeNotifier {
 
     if (response != null) {
       final data = response['message'];
-      _currentUser = User(
-        id: data['email'],
-        phoneNumber: data['number'],
-        fullName: data['full_name'],
-        email: data['email'],
-        dateOfBirth: DateTime.parse(data['date_of_birth']),
-        gender: data['gender'],
-      );
+      // _currentUser = User(
+      //   id: data['email'],
+      //   phoneNumber: data['number'] ?? '',
+      //   fullName: data['full_name'],
+      //   email: data['email'],
+      //   dateOfBirth: DateTime.parse(data['date_of_birth']),
+      //   gender: data['gender'],
+      //   waterDeliveryBoy: data['water_delivery_boy'],
+      // );
+      _currentUser = User.fromJson(data);
+      // SharedPref shra
+      SharedPref sharedPref = SharedPref();
+      // prefKeyUserData
+      sharedPref.saveObject(sharedPref.prefKeyUserData, _currentUser);
       notifyListeners();
       utils.loggerPrint('User info fetched successfully: $data');
       return _currentUser;

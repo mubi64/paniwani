@@ -155,6 +155,17 @@ class Utils {
     FocusScope.of(context).requestFocus(FocusNode());
   }
 
+  String getInitials(String? fullName) {
+    if (fullName == null || fullName.isEmpty) return "U";
+
+    final nameParts = fullName.split(" ");
+    if (nameParts.length > 1 && nameParts[1].isNotEmpty) {
+      return "${nameParts[0][0]}${nameParts[1][0]}".toUpperCase();
+    }
+
+    return fullName.substring(0, 1).toUpperCase();
+  }
+
   Future<bool> isNetworkAvailable(
     BuildContext? context,
     Utils? utils, {

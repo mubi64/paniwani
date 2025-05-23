@@ -38,14 +38,7 @@ class PackageService {
     }
   }
 
-  Future<String> purchasePackage(
-    BuildContext context,
-    List packages,
-    String cardNumber,
-    String expMonth,
-    String expYear,
-    String cvc,
-  ) async {
+  Future<String> purchasePackage(BuildContext context, List packages) async {
     try {
       var formData = {'bottle_packages': packages};
       var response = await APIFunction.postJson(
@@ -58,18 +51,6 @@ class PackageService {
       if (response != null) {
         utils.loggerPrint('Package purchased successfully');
         utils.loggerPrint('Response: ${response.data}');
-
-        // I want to call makePayment here
-        // var paymentResponse = await makePayment(
-        //   context,
-        //   cardNumber,
-        //   expMonth,
-        //   expYear,
-        //   cvc,
-        //   0,
-        //   response.data['message']['sales_invoice'],
-        //   [],
-        // );
         utils.loggerPrint('Payment made successfully');
         return response.data['message']['sales_invoice'];
       } else {
@@ -82,14 +63,7 @@ class PackageService {
     }
   }
 
-  Future<String> purchaseBottles(
-    BuildContext context,
-    List bottles,
-    String cardNumber,
-    String expMonth,
-    String expYear,
-    String cvc,
-  ) async {
+  Future<String> purchaseBottles(BuildContext context, List bottles) async {
     try {
       var response = await APIFunction.postJson(
         context,
@@ -106,7 +80,7 @@ class PackageService {
         return '';
       }
     } catch (e) {
-      utils.loggerPrint('Error in makePayment: $e');
+      utils.loggerPrint('Error in bottle purchase: $e');
       return '';
     }
   }
@@ -139,14 +113,11 @@ class PackageService {
         '',
       );
       if (response != null) {
-        utils.loggerPrint('Payment made successfully');
         return response.data;
-      } else {
-        utils.loggerPrint('Failed to make payment: $response');
-        return;
       }
     } catch (e) {
-      utils.loggerPrint('Error in makePayment: $e');
+      utils.loggerPrint('Error in makePayment 146: $e');
+      return e;
     }
   }
 

@@ -53,55 +53,52 @@ class _MobileNumberScreenState extends State<MobileNumberScreen> {
   Future<void> _sendOtp() async {
     if (!_formKey.currentState!.validate()) return;
     await validateBaseUrl();
-    utils
-          .isNetworkAvailable(context, utils, showDialog: true)
-          .then((value) {
-        utils.hideKeyboard(context);
+    utils.isNetworkAvailable(context, utils, showDialog: true).then((value) {
+      utils.hideKeyboard(context);
 
-        checkNetwork(value);
-      });
-    
+      checkNetwork(value);
+    });
   }
 
   void checkNetwork(bool value) async {
     if (value) {
       await _pref.saveString(_pref.prefBaseUrl, _urlController.text);
-    setState(() {
-      _isLoading = true;
-    });
-    utils.showProgressDialog(context);
-    try {
       setState(() {
-        _phoneController.text = _phoneController.text.replaceAll(' ', '');
+        _isLoading = true;
       });
-      String baseURL = await _pref.readString(_pref.prefBaseUrl);
-      final result = await _authService.sendOTP(
-        context: context,
-        phoneNumber: diCode + _phoneController.text,
-      );
-      if (result) {
-        utils.hideProgressDialog(context);
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder:
-                (context) => OtpVerificationScreen(
-                  phoneNumber: diCode + _phoneController.text,
-                ),
-          ),
+      utils.showProgressDialog(context);
+      try {
+        setState(() {
+          _phoneController.text = _phoneController.text.replaceAll(' ', '');
+        });
+        String baseURL = await _pref.readString(_pref.prefBaseUrl);
+        final result = await _authService.sendOTP(
+          context: context,
+          phoneNumber: diCode + _phoneController.text,
         );
-      } else {
+        if (result) {
+          utils.hideProgressDialog(context);
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder:
+                  (context) => OtpVerificationScreen(
+                    phoneNumber: diCode + _phoneController.text,
+                  ),
+            ),
+          );
+        } else {
+          utils.hideProgressDialog(context);
+          utils.showToast("OTP send failed", context);
+        }
+      } catch (e) {
+        utils.showToast(AppStrings.error, context);
         utils.hideProgressDialog(context);
-        utils.showToast("OTP send failed", context);
+      } finally {
+        setState(() {
+          _isLoading = false;
+        });
       }
-    } catch (e) {
-      utils.showToast(AppStrings.error, context);
-      utils.hideProgressDialog(context);
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
-    }
     }
   }
 
@@ -148,10 +145,10 @@ class _MobileNumberScreenState extends State<MobileNumberScreen> {
                         },
                       ),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
                         decoration: BoxDecoration(
-                          color: Colors.grey.shade200,
-                          borderRadius: BorderRadius.circular(30),
+                          color: Theme.of(context).colorScheme.secondary,
+                          borderRadius: BorderRadius.circular(10),
                         ),
                         child: InternationalPhoneNumberInput(
                           onInputChanged: (PhoneNumber number) {
@@ -170,7 +167,7 @@ class _MobileNumberScreenState extends State<MobileNumberScreen> {
                           ignoreBlank: false,
                           autoValidateMode: AutovalidateMode.onUserInteraction,
                           selectorTextStyle: TextStyle(
-                            color: Theme.of(context).colorScheme.inversePrimary,
+                            color: Theme.of(context).colorScheme.tertiary,
                           ),
                           initialValue: _phoneNumber,
                           textFieldController: _phoneController,
@@ -193,14 +190,18 @@ class _MobileNumberScreenState extends State<MobileNumberScreen> {
                     ],
                   ),
                   const SizedBox(height: 24),
-                  PrimaryButton(
-                    text: AppStrings.sendOtp,
-                    onPressed:
-                        _isLoading
-                            ? null
-                            : isNumberValid
-                            ? _sendOtp
-                            : null,
+                  SizedBox(
+                    width: double.infinity,
+                    height: 55,
+                    child: PrimaryButton(
+                      text: AppStrings.sendOtp,
+                      onPressed:
+                          _isLoading
+                              ? null
+                              : isNumberValid
+                              ? _sendOtp
+                              : null,
+                    ),
                   ),
                 ],
               ),

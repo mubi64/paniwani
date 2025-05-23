@@ -52,7 +52,7 @@ void dialogConfirm(
                           /*Strings.titleConfirmation*/
                           AppStrings.appName,
                           textStyleNew: TextStyle(
-                            color: Theme.of(context).colorScheme.inversePrimary,
+                            color: Theme.of(context).colorScheme.primary,
                             fontSize: ResponsiveFlutter.of(context).fontSize(3),
                             fontWeight: FontWeight.w600,
                           ),
@@ -66,7 +66,7 @@ void dialogConfirm(
                           msg!,
                           textAlignNew: TextAlign.start,
                           textStyleNew: TextStyle(
-                            color: Theme.of(context).colorScheme.inversePrimary,
+                            color: Theme.of(context).colorScheme.tertiary,
                             fontSize: ResponsiveFlutter.of(context).fontSize(2),
                             fontWeight: FontWeight.w400,
                           ),
@@ -129,107 +129,114 @@ void dialogConfirm(
   );
 }
 
-void dialogAlert(BuildContext context, Utils utils, String? msg,
-    {String? title = "", Icon? icon}) {
+void dialogAlert(
+  BuildContext context,
+  Utils utils,
+  String? msg, {
+  String? title = "",
+  Icon? icon,
+}) {
   if (utils.isValidationEmpty(title!)) {
     title = AppStrings.appName;
   }
 
   showDialog(
-      context: context,
-      barrierColor: const Color(0x73000000),
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return PopScope(
-          canPop: false,
-          child: StatefulBuilder(
-            builder: (context, setState) {
-              return Dialog(
-                backgroundColor: Colors.transparent,
-                insetPadding: EdgeInsets.zero,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Container(
-                      width: double.infinity,
-                      padding: EdgeInsets.all(
-                          ResponsiveFlutter.of(context).moderateScale(28)),
-                      margin: EdgeInsets.all(
-                        ResponsiveFlutter.of(context).moderateScale(20, 0.0),
-                      ),
-                      decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.surface,
-                          borderRadius: BorderRadius.circular(
-                            ResponsiveFlutter.of(context)
-                                .moderateScale(12, 0.0),
-                          )),
-                      alignment: AlignmentDirectional.center,
-                      child: Column(
-                        children: [
-                          MyTextView(
-                            title!,
-                            textStyleNew: TextStyle(
-                              color: Theme.of(context).colorScheme.inversePrimary,
-                              fontSize:
-                                  ResponsiveFlutter.of(context).fontSize(3),
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          SizedBox(
-                            height:
-                                ResponsiveFlutter.of(context).verticalScale(28),
-                          ),
-                          MyTextView(
-                            msg!,
-                            textAlignNew: TextAlign.start,
-                            textStyleNew: TextStyle(
-                              color: Theme.of(context).colorScheme.inversePrimary,
-                              fontSize:
-                                  ResponsiveFlutter.of(context).fontSize(2),
-                              fontWeight: FontWeight.w400,
-                            ),
-                            isMaxLineWrap: true,
-                            // isMaxLineWrap: false,
-                            // maxLinesNew: 10,
-                          ),
-                          if (icon != null)
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Container(
-                                child: icon,
-                              ),
-                            ),
-                          SizedBox(
-                            height:
-                                ResponsiveFlutter.of(context).verticalScale(28),
-                          ),
-                          Row(
-                            children: [
-                              const Expanded(child: SizedBox()),
-                              SizedBox(
-                                width: ResponsiveFlutter.of(context).scale(100),
-                                child: commonButton(
-                                  context: context,
-                                  title: AppStrings.btnOk,
-                                  fontSize: 2,
-                                  callback: () {
-                                    Navigator.of(context, rootNavigator: true)
-                                        .pop();
-                                  },
-                                ),
-                              ),
-                              const Expanded(child: SizedBox()),
-                            ],
-                          ),
-                        ],
+    context: context,
+    barrierColor: const Color(0x73000000),
+    barrierDismissible: false,
+    builder: (BuildContext context) {
+      return PopScope(
+        canPop: false,
+        child: StatefulBuilder(
+          builder: (context, setState) {
+            return Dialog(
+              backgroundColor: Colors.transparent,
+              insetPadding: EdgeInsets.zero,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.all(
+                      ResponsiveFlutter.of(context).moderateScale(28),
+                    ),
+                    margin: EdgeInsets.all(
+                      ResponsiveFlutter.of(context).moderateScale(20, 0.0),
+                    ),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.surface,
+                      borderRadius: BorderRadius.circular(
+                        ResponsiveFlutter.of(context).moderateScale(12, 0.0),
                       ),
                     ),
-                  ],
-                ),
-              );
-            },
-          ),
-        );
-      });
+                    alignment: AlignmentDirectional.center,
+                    child: Column(
+                      children: [
+                        MyTextView(
+                          title!,
+                          textStyleNew: TextStyle(
+                            color: Theme.of(context).colorScheme.inversePrimary,
+                            fontSize: ResponsiveFlutter.of(context).fontSize(3),
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        SizedBox(
+                          height: ResponsiveFlutter.of(
+                            context,
+                          ).verticalScale(28),
+                        ),
+                        MyTextView(
+                          msg!,
+                          textAlignNew: TextAlign.start,
+                          textStyleNew: TextStyle(
+                            color: Theme.of(context).colorScheme.tertiary,
+                            fontSize: ResponsiveFlutter.of(context).fontSize(2),
+                            fontWeight: FontWeight.w400,
+                          ),
+                          isMaxLineWrap: true,
+                          // isMaxLineWrap: false,
+                          // maxLinesNew: 10,
+                        ),
+                        if (icon != null)
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Container(child: icon),
+                          ),
+                        SizedBox(
+                          height: ResponsiveFlutter.of(
+                            context,
+                          ).verticalScale(28),
+                        ),
+                        Row(
+                          children: [
+                            const Expanded(child: SizedBox()),
+                            SizedBox(
+                              width: ResponsiveFlutter.of(context).scale(100),
+                              child: commonButton(
+                                context: context,
+                                title: AppStrings.btnOk,
+                                fontSize: 2,
+                                callback: () {
+                                  Navigator.of(
+                                    context,
+                                    rootNavigator: true,
+                                  ).pop();
+                                },
+                              ),
+                            ),
+                            const Expanded(child: SizedBox()),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
+      );
+    },
+  );
 }

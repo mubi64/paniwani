@@ -103,6 +103,7 @@ class _MapPickerScreenState extends State<MapPickerScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var colorScheme = Theme.of(context).colorScheme;
     if (selectedLocation == null) {
       return Scaffold(
         appBar: AppBar(title: Text("Pick Location")),
@@ -111,77 +112,116 @@ class _MapPickerScreenState extends State<MapPickerScreen> {
     }
 
     return Scaffold(
-      appBar: AppBar(title: Text("Pick Location")),
-      body: Column(
+      body: Stack(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              children: [
-                TextField(
-                  controller: _searchController,
-                  onChanged: _searchLocation,
-                  decoration: InputDecoration(
-                    prefixIcon: Icon(Icons.search),
-                    hintText: "Search location...",
-                    border: OutlineInputBorder(),
+          FlutterMap(
+            mapController: _mapController,
+            options: MapOptions(
+              initialCenter: selectedLocation!,
+              initialZoom: 13.0,
+              onTap: (tapPosition, point) {
+                setState(() => selectedLocation = point);
+              },
+            ),
+            children: [
+              TileLayer(
+                urlTemplate:
+                    "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                subdomains: ['a', 'b', 'c'],
+              ),
+              MarkerLayer(
+                markers: [
+                  Marker(
+                    point: selectedLocation!,
+                    child: Icon(
+                      Icons.location_pin,
+                      color: Colors.blue,
+                      size: 50,
+                    ),
                   ),
-                ),
-                if (_suggestions.isNotEmpty)
-                  SizedBox(
-                    height: 200,
-                    child: ListView.builder(
-                      itemCount: _suggestions.length,
-                      itemBuilder: (context, index) {
-                        final suggestion = _suggestions[index];
-                        return Container(
-                          decoration: BoxDecoration(
-                            border: Border(
-                              bottom: BorderSide(
-                                color: Theme.of(context).colorScheme.primary,
-                                width: 1,
-                              ),
+                ],
+              ),
+            ],
+          ),
+
+          SafeArea(
+            child: Row(
+              children: [
+                if (_suggestions.isEmpty)
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.secondary,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    margin: const EdgeInsets.only(left: 25.0),
+                    child: IconButton(
+                      icon: const Icon(Icons.arrow_back_ios_rounded),
+                      onPressed: () => Navigator.pop(context),
+                      color: Theme.of(context).colorScheme.inversePrimary,
+                    ),
+                  ),
+                Expanded(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6.0),
+                        margin: const EdgeInsets.symmetric(horizontal: 10.0),
+                        decoration: BoxDecoration(
+                          color: colorScheme.secondary,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: TextField(
+                          controller: _searchController,
+                          onChanged: _searchLocation,
+                          decoration: InputDecoration(
+                            prefixIcon: Icon(
+                              Icons.search,
+                              color: colorScheme.primary,
+                            ),
+                            hintText: "Search location...",
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: BorderSide.none,
                             ),
                           ),
-                          child: ListTile(
-                            tileColor: Theme.of(context).colorScheme.secondary,
-                            title: Text(suggestion['display']),
-                            onTap: () => _onSuggestionTap(suggestion),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: FlutterMap(
-              mapController: _mapController,
-              options: MapOptions(
-                initialCenter: selectedLocation!,
-                initialZoom: 13.0,
-                onTap: (tapPosition, point) {
-                  setState(() => selectedLocation = point);
-                },
-              ),
-              children: [
-                TileLayer(
-                  urlTemplate:
-                      "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-                  subdomains: ['a', 'b', 'c'],
-                ),
-                MarkerLayer(
-                  markers: [
-                    Marker(
-                      point: selectedLocation!,
-                      child: Icon(
-                        Icons.location_pin,
-                        color: Colors.red,
-                        size: 40,
+                        ),
                       ),
-                    ),
-                  ],
+                      if (_suggestions.isNotEmpty)
+                        Container(
+                          height: 200,
+                          margin: const EdgeInsets.symmetric(horizontal: 10.0),
+                          decoration: BoxDecoration(
+                            color: colorScheme.surface,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: ListView.builder(
+                            itemCount: _suggestions.length,
+                            itemBuilder: (context, index) {
+                              final suggestion = _suggestions[index];
+                              return Container(
+                                decoration: BoxDecoration(
+                                  color: colorScheme.secondary,
+                                  border: Border(
+                                    bottom: BorderSide(
+                                      color: colorScheme.primary,
+                                      width: 1,
+                                    ),
+                                  ),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: ListTile(
+                                  tileColor:
+                                      Theme.of(context).colorScheme.secondary,
+                                  title: Text(suggestion['display']),
+                                  onTap: () => _onSuggestionTap(suggestion),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -189,6 +229,7 @@ class _MapPickerScreenState extends State<MapPickerScreen> {
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         onPressed: () async {
           List<Placemark> placemarks = await placemarkFromCoordinates(
             selectedLocation!.latitude,
@@ -212,8 +253,8 @@ class _MapPickerScreenState extends State<MapPickerScreen> {
             });
           }
         },
-        label: Text("Select"),
-        icon: Icon(Icons.check),
+        label: Text("Select", style: TextStyle(color: colorScheme.tertiary)),
+        icon: Icon(Icons.check, color: colorScheme.tertiary),
       ),
     );
   }
