@@ -50,6 +50,16 @@ class SharedPref {
     prefs.setInt(key, value);
   }
 
+  saveBool(String key, bool value) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setBool(key, value);
+  }
+
+  readBool(String key) async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(key);
+  }
+
   remove(String key) async {
     final prefs = await SharedPreferences.getInstance();
     prefs.remove(key);

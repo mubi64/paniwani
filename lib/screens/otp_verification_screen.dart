@@ -7,6 +7,7 @@ import '../api/services/auth_service.dart';
 import '../utils/strings.dart';
 import '../utils/utils.dart';
 import '../widgets/primary_button.dart';
+import 'rider_screens/map_home_screen.dart';
 import 'user_info_screen.dart';
 
 class OtpVerificationScreen extends StatefulWidget {
@@ -84,7 +85,13 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
           // If user profile is complete, go directly to home screen
           Navigator.pushAndRemoveUntil(
             context,
-            MaterialPageRoute(builder: (context) => NavigationBarScreen()),
+            MaterialPageRoute(
+              builder:
+                  (context) =>
+                      user.waterDeliveryBoy == true
+                          ? MapHomeScreen()
+                          : NavigationBarScreen(),
+            ),
             (route) => false,
           );
         }

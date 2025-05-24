@@ -8,8 +8,9 @@ class WelcomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+      backgroundColor: colorScheme.inversePrimary,
       body: Stack(
         children: [
           // Curved bottom blue container
@@ -17,10 +18,7 @@ class WelcomeScreen extends StatelessWidget {
             alignment: Alignment.bottomCenter,
             child: ClipPath(
               clipper: BottomWaveClipper(),
-              child: Container(
-                height: 360,
-                color: Theme.of(context).colorScheme.secondary,
-              ),
+              child: Container(height: 360, color: colorScheme.secondary),
             ),
           ),
 
@@ -32,31 +30,30 @@ class WelcomeScreen extends StatelessWidget {
                 Text(
                   AppStrings.appName,
                   style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                    color: Theme.of(context).colorScheme.secondary,
+                    color: colorScheme.secondary,
                     fontSize: 36,
                   ),
                 ),
                 Text(
                   AppStrings.welcomeTitle,
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    color: Theme.of(context).colorScheme.secondaryFixed,
+                    color: colorScheme.secondaryFixed,
                     fontSize: 24,
                   ),
                 ),
                 const SizedBox(height: 20),
                 Icon(
                   Icons.water_damage_rounded,
-                  color: Theme.of(context).colorScheme.secondary,
+                  color: colorScheme.secondary,
                   size: 100,
+                  semanticLabel: 'Water drop icon',
                 ),
-                const SizedBox(height: 200),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.26),
 
                 // Get Started Button
                 OutlinedButton(
                   style: OutlinedButton.styleFrom(
-                    side: BorderSide(
-                      color: Theme.of(context).colorScheme.inversePrimary,
-                    ),
+                    side: BorderSide(color: colorScheme.inversePrimary),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30),
                     ),
@@ -77,7 +74,7 @@ class WelcomeScreen extends StatelessWidget {
                   child: Text(
                     AppStrings.getStarted,
                     style: TextStyle(
-                      color: Theme.of(context).colorScheme.inversePrimary,
+                      color: colorScheme.inversePrimary,
                       fontSize: 16,
                     ),
                   ),

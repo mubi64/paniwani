@@ -30,6 +30,7 @@ class _MobileNumberScreenState extends State<MobileNumberScreen> {
   @override
   void dispose() {
     _phoneController.dispose();
+    _urlController.dispose();
     super.dispose();
   }
 
@@ -104,8 +105,9 @@ class _MobileNumberScreenState extends State<MobileNumberScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
+      backgroundColor: colorScheme.surface,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(24.0),
@@ -118,8 +120,9 @@ class _MobileNumberScreenState extends State<MobileNumberScreen> {
                 children: [
                   Icon(
                     Icons.water_damage_rounded,
-                    color: Theme.of(context).colorScheme.inversePrimary,
+                    color: colorScheme.inversePrimary,
                     size: 100,
+                    semanticLabel: 'Water drop icon',
                   ),
                   Text(
                     AppStrings.appName,
@@ -136,10 +139,10 @@ class _MobileNumberScreenState extends State<MobileNumberScreen> {
                       ),
                       CustomTextField(
                         controller: _urlController,
-                        labelText: "Base URL",
+                        labelText: AppStrings.baseUrl,
                         onValidate: (value) {
                           if (value == null || value.isEmpty) {
-                            return "Please enter baseURL";
+                            return AppStrings.pleaseEnterBaseUrl;
                           }
                           return null;
                         },
@@ -147,7 +150,7 @@ class _MobileNumberScreenState extends State<MobileNumberScreen> {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 10),
                         decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.secondary,
+                          color: colorScheme.secondary,
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: InternationalPhoneNumberInput(
@@ -167,7 +170,7 @@ class _MobileNumberScreenState extends State<MobileNumberScreen> {
                           ignoreBlank: false,
                           autoValidateMode: AutovalidateMode.onUserInteraction,
                           selectorTextStyle: TextStyle(
-                            color: Theme.of(context).colorScheme.tertiary,
+                            color: colorScheme.tertiary,
                           ),
                           initialValue: _phoneNumber,
                           textFieldController: _phoneController,
@@ -181,7 +184,7 @@ class _MobileNumberScreenState extends State<MobileNumberScreen> {
                           ),
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Please enter a valid phone number';
+                              return AppStrings.pleaseEnterMobileNumber;
                             }
                             return null;
                           },

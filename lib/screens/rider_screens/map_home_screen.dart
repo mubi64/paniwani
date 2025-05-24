@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 
 import '../../api/services/delivery_order_service.dart';
@@ -28,6 +29,17 @@ class _MapHomeScreenState extends State<MapHomeScreen> {
   }
 
   Future<void> fetchDeliveryOrders() async {
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) return;
+
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied ||
+        permission == LocationPermission.deniedForever) {
+      permission = await Geolocator.requestPermission();
+      if (permission != LocationPermission.whileInUse &&
+          permission != LocationPermission.always)
+        return;
+    }
     isLoadingDeliveryOrder = true;
     _deliveryOrder = await DeliveryOrderService().getDeliveryOrders(context);
     isLoadingDeliveryOrder = false;

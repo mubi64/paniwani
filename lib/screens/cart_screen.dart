@@ -4,16 +4,13 @@ import 'package:paniwani/api/api_helpers.dart';
 import 'package:provider/provider.dart';
 
 import '../api/services/package_service.dart';
-import '../models/cart_item.dart';
 import '../models/restaurant.dart';
 import '../utils/comman_dialogs.dart';
 import '../utils/strings.dart';
 import '../utils/utils.dart';
 import '../widgets/my_cart_tile.dart';
 import '../widgets/primary_button.dart';
-import 'bank_card_screen.dart';
 import 'navigation_bar_screen.dart';
-import 'place_order_screen.dart';
 
 class CartScreen extends StatefulWidget {
   const CartScreen({super.key});
@@ -127,85 +124,78 @@ class _CartScreenState extends State<CartScreen> {
               ),
             ],
           ),
-          body: Column(
-            children: [
-              Expanded(
-                child: Column(
-                  children: [
-                    if (userCart.isEmpty)
-                      Expanded(
-                        child: Center(
-                          child: Text("${AppStrings.cartEmpty}..."),
-                        ),
-                      )
-                    else
-                      Expanded(
-                        child: ListView.builder(
-                          itemCount: userCart.length,
-                          itemBuilder: (context, index) {
-                            final cartItem = userCart[index];
-                            return MyCartTile(cartItem: cartItem);
-                          },
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-              if (userCart.isNotEmpty)
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 8.0,
-                    horizontal: 25,
-                  ),
+          body: SafeArea(
+            child: Column(
+              children: [
+                Expanded(
                   child: Column(
                     children: [
-                      // total price
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            "Total ",
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
+                      if (userCart.isEmpty)
+                        Expanded(
+                          child: Center(
+                            child: Text("${AppStrings.cartEmpty}..."),
                           ),
-                          Text(restaurant.getTotalPriceWithCurrency()),
-                        ],
-                      ),
-                      Divider(
-                        color: Theme.of(context).colorScheme.primary,
-                        thickness: 1,
-                        height: 20,
-                      ),
-                      SizedBox(
-                        width: double.infinity,
-                        height: 55,
-                        child: PrimaryButton(
-                          onPressed: () async {
-                            // () => Navigator.push(
-                            //     context,
-                            //     MaterialPageRoute(
-                            //       builder:
-                            //           (context) =>
-                            //               BankCardScreen(cart: userCart),
-                            //     ),
-                            //   ),
-                            utils.showProgressDialog(context);
-                            makePayment(
-                              userCart,
-                              restaurant.getTotalPrice(),
-                              userCart[0].package.currency.toString(),
-                            );
-                          },
-                          text: "Checkout",
+                        )
+                      else
+                        Expanded(
+                          child: ListView.builder(
+                            itemCount: userCart.length,
+                            itemBuilder: (context, index) {
+                              final cartItem = userCart[index];
+                              return MyCartTile(cartItem: cartItem);
+                            },
+                          ),
                         ),
-                      ),
                     ],
                   ),
                 ),
-              SizedBox(height: 25),
-            ],
+                if (userCart.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 8.0,
+                      horizontal: 25,
+                    ),
+                    child: Column(
+                      children: [
+                        // total price
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "Total ",
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(restaurant.getTotalPriceWithCurrency()),
+                          ],
+                        ),
+                        Divider(
+                          color: Theme.of(context).colorScheme.primary,
+                          thickness: 1,
+                          height: 20,
+                        ),
+                        SizedBox(
+                          width: double.infinity,
+                          height: 55,
+                          child: PrimaryButton(
+                            onPressed: () async {
+                              utils.showProgressDialog(context);
+                              makePayment(
+                                userCart,
+                                restaurant.getTotalPrice(),
+                                userCart[0].package.currency.toString(),
+                              );
+                            },
+                            text: "Checkout",
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+              ],
+            ),
           ),
         );
       },

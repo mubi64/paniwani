@@ -27,6 +27,7 @@ class _SplashScreenState extends State<SplashScreen> {
     User? user = await authService.getUserInfo(context);
 
     if (user != null && user.isProfileComplete) {
+      print("User is logged in: ${user.waterDeliveryBoy}");
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(

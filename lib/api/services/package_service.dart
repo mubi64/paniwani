@@ -233,4 +233,33 @@ class PackageService {
       return [];
     }
   }
+
+  // securety return
+  Future<void> returnBottles(
+    BuildContext context,
+    String bottleId,
+    int qty,
+  ) async {
+    try {
+      var formData = {"water_bottle_product": bottleId, "quantity": qty};
+      var response = await APIFunction.postJson(
+        context,
+        utils,
+        APIFunction.securityReturn,
+        formData,
+        '',
+      );
+      if (response != null) {
+        utils.loggerPrint('Bottle returned successfully');
+        utils.showToast('Bottle returned successfully', context);
+        return;
+      } else {
+        utils.loggerPrint('Failed to return bottle: $response');
+        utils.showToast('Failed to return bottle', context);
+        return;
+      }
+    } catch (e) {
+      utils.loggerPrint('Error in returnBottles: $e');
+    }
+  }
 }

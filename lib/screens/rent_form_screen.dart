@@ -1,4 +1,3 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:paniwani/widgets/custom_dropdown.dart';
@@ -12,7 +11,6 @@ import '../utils/utils.dart';
 import '../widgets/disable_row_field.dart';
 import '../widgets/my_quantity_selector_field.dart';
 import '../widgets/primary_button.dart';
-import 'bank_card_screen.dart';
 import 'navigation_bar_screen.dart';
 
 class RentFormScreen extends StatefulWidget {
@@ -159,122 +157,138 @@ class _RentFormScreenState extends State<RentFormScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(AppStrings.bottleRent)),
-      body: Column(
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              spacing: 20,
-              children: [
-                if (!loading)
+      appBar: AppBar(
+        title: Text(
+          widget.isSecurityReturn
+              ? AppStrings.securityReturn
+              : AppStrings.bottleRent,
+        ),
+      ),
+      body: SafeArea(
+        child: Column(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                spacing: 20,
+                children: [
+                  if (!loading)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: CustomDropdown<Bottle>(
+                        hintText: AppStrings.bottle,
+                        items: bottleList,
+                        selectedValue: _selectedBottle,
+                        onChanged: (value) {
+                          setState(() {
+                            _selectedBottle = value;
+                          });
+                        },
+                        getLabel: (item) {
+                          if (item.name != null && item.item != null) {
+                            return '${item.item}\n${item.name}';
+                          } else if (item.name != null) {
+                            return item.name!;
+                          } else if (item.item != null) {
+                            return item.item!;
+                          } else {
+                            return 'Unknown';
+                          }
+                        },
+                      ),
+                    ),
+                  if (_selectedBottle != null)
+                    DisableRowField(
+                      firstLabel: 'Bottle Type',
+                      secondLabel: 'Price',
+                      firstValue: _selectedBottle!.bottleType.toString(),
+                      secondValue: _selectedBottle!.price.toString(),
+                    ),
+                  // Add more fields as needed
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: CustomDropdown<Bottle>(
-                      hintText: AppStrings.bottle,
-                      items: bottleList,
-                      selectedValue: _selectedBottle,
-                      onChanged: (value) {
-                        setState(() {
-                          _selectedBottle = value;
-                        });
-                      },
-                      getLabel: (item) {
-                        if (item.name != null && item.item != null) {
-                          return '${item.item}\n${item.name}';
-                        } else if (item.name != null) {
-                          return item.name!;
-                        } else if (item.item != null) {
-                          return item.item!;
-                        } else {
-                          return 'Unknown';
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: MyQuantitySelectorField(
+                      label: "Bottle Quantity",
+                      decreaseQuantity: () {
+                        if (bottleQuantity > 1) {
+                          setState(() {
+                            bottleQuantity--;
+                            quantityController.text = bottleQuantity.toString();
+                          });
                         }
                       },
+                      increaseQuantity: () {
+                        setState(() {
+                          bottleQuantity++;
+                          quantityController.text = bottleQuantity.toString();
+                        });
+                      },
+                      quantityController: quantityController,
+                      bottleQuantity: bottleQuantity,
+                      updateQuantity: updateQuantity,
                     ),
                   ),
-                if (_selectedBottle != null)
-                  DisableRowField(
-                    firstLabel: 'Bottle Type',
-                    secondLabel: 'Price',
-                    firstValue: _selectedBottle!.bottleType.toString(),
-                    secondValue: _selectedBottle!.price.toString(),
-                  ),
-                // Add more fields as needed
-                MyQuantitySelectorField(
-                  label: "Bottle Quantity",
-                  decreaseQuantity: () {
-                    if (bottleQuantity > 1) {
-                      setState(() {
-                        bottleQuantity--;
-                        quantityController.text = bottleQuantity.toString();
-                      });
-                    }
-                  },
-                  increaseQuantity: () {
-                    setState(() {
-                      bottleQuantity++;
-                      quantityController.text = bottleQuantity.toString();
-                    });
-                  },
-                  quantityController: quantityController,
-                  bottleQuantity: bottleQuantity,
-                  updateQuantity: updateQuantity,
-                ),
-                if (_selectedBottle != null)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: CustomTextField(
-                      controller: TextEditingController(
-                        text:
-                            (double.parse(_selectedBottle!.price.toString()) *
-                                    double.parse(quantityController.text))
-                                .toString(),
+                  if (_selectedBottle != null)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: CustomTextField(
+                        controller: TextEditingController(
+                          text:
+                              (double.parse(_selectedBottle!.price.toString()) *
+                                      double.parse(quantityController.text))
+                                  .toString(),
+                        ),
+                        labelText: "Total Price",
+                        enabled: false,
                       ),
-                      labelText: "Total Price",
-                      enabled: false,
                     ),
-                  ),
-              ],
+                ],
+              ),
             ),
-          ),
-          Container(
-            width: double.infinity,
-            height: 55,
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: PrimaryButton(
-              text:
-                  widget.isSecurityReturn
-                      ? AppStrings.securityReturn
-                      : AppStrings.pay,
-              onPressed: () {
-                if (_selectedBottle == null) {
-                  utils.showToast(
-                    "${AppStrings.selectMessage} ${AppStrings.bottle}",
-                    context,
-                  );
-                  return;
-                }
-                // Navigator.push(
-                //   context,
-                //   MaterialPageRoute(
-                //     builder:
-                //         (context) => BankCardScreen(
-                //           bottle: _selectedBottle,
-                //           qty: int.parse(quantityController.text),
-                //         ),
-                //   ),
-                // );
-                utils.showProgressDialog(context);
-                makePayment(
-                  double.parse(_selectedBottle!.price.toString()) *
-                      double.parse(quantityController.text),
-                  _selectedBottle!.currency.toString(),
-                );
-              },
+            Container(
+              width: double.infinity,
+              height: 55,
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: PrimaryButton(
+                text:
+                    widget.isSecurityReturn
+                        ? AppStrings.securityReturn
+                        : AppStrings.pay,
+                onPressed: () async {
+                  if (_selectedBottle == null) {
+                    utils.showToast(
+                      "${AppStrings.selectMessage} ${AppStrings.bottle}",
+                      context,
+                    );
+                    return;
+                  }
+                  utils.showProgressDialog(context);
+                  if (widget.isSecurityReturn) {
+                    await PackageService().returnBottles(
+                      context,
+                      _selectedBottle!.name.toString(),
+                      bottleQuantity,
+                    );
+                    utils.hideProgressDialog(context);
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => NavigationBarScreen(),
+                      ),
+                      (route) => false,
+                    );
+                  } else {
+                    makePayment(
+                      double.parse(_selectedBottle!.price.toString()) *
+                          double.parse(quantityController.text),
+                      _selectedBottle!.currency.toString(),
+                    );
+                  }
+                },
+              ),
             ),
-          ),
-          SizedBox(height: 20),
-        ],
+          ],
+        ),
       ),
     );
   }

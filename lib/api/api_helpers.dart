@@ -55,6 +55,8 @@ class APIFunction {
       "/api/method/bottled_water_system.api.order.water_order_delivery";
   static const String bottleReturn =
       "/api/method/bottled_water_system.api.rent_bottles.bottle_return";
+  static const String securityReturn =
+      "/api/method/bottled_water_system.api.rent_bottles.security_return";
 
   static Future<dynamic> get(
     BuildContext context,

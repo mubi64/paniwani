@@ -16,6 +16,7 @@ import 'detail_screen.dart';
 import 'navigation_bar_screen.dart';
 import 'place_order_screen.dart';
 import 'Packages/your_packages_screen.dart';
+import 'rent_form_screen.dart';
 
 final RouteObserver<ModalRoute<void>> routeObserver =
     RouteObserver<ModalRoute<void>>();
@@ -112,8 +113,16 @@ class _HomeScreenState extends State<HomeScreen> with RouteAware {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               QuickActionButton(
-                text: AppStrings.orderWater,
-                onPressed: () {},
+                text: AppStrings.securityReturn,
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder:
+                          (context) => RentFormScreen(isSecurityReturn: true),
+                    ),
+                  );
+                },
                 icon: Icons.shopping_cart,
               ),
               QuickActionButton(
@@ -141,19 +150,6 @@ class _HomeScreenState extends State<HomeScreen> with RouteAware {
         if (actiPackages.isEmpty) {
           return Container();
         }
-        // return Padding(
-        //   padding: const EdgeInsets.only(left: 10, right: 20, bottom: 20),
-        //   child: SizedBox(
-        //     height: 100,
-        //     child: ListView.builder(
-        //       scrollDirection: Axis.horizontal,
-        //       padding: const EdgeInsets.symmetric(horizontal: 8),
-        //       itemCount: loading ? 3 : actiPackages.length,
-        //       itemBuilder: (context, index) {
-        //       },
-        //     ),
-        //   ),
-        // );
 
         final package = actiPackages[0];
         return Column(
@@ -172,7 +168,11 @@ class _HomeScreenState extends State<HomeScreen> with RouteAware {
             loading
                 ? Padding(
                   padding: const EdgeInsets.only(right: 20.0),
-                  child: Skeleton(height: 100, width: 300, radius: 10),
+                  child: Skeleton(
+                    height: 80,
+                    width: double.infinity,
+                    radius: 10,
+                  ),
                 )
                 : ActiveProductCard(index: 0, package: package),
           ],
@@ -372,141 +372,6 @@ class ActiveProductCard extends StatelessWidget {
         ],
       ),
     );
-    // return Container(
-    //   width: 300,
-    //   margin: const EdgeInsets.only(right: 16, top: 8, bottom: 8),
-    //   decoration: BoxDecoration(borderRadius: BorderRadius.circular(15)),
-    //   child: Stack(
-    //     children: [
-    //       Positioned.fill(
-    //         child: Container(
-    //           decoration: BoxDecoration(
-    //             borderRadius: BorderRadius.circular(15),
-    //             gradient: LinearGradient(
-    //               colors: [
-    //                 index.isEven
-    //                     ? Color(0xFF1D9E83).withValues(alpha: 0.7)
-    //                     : Color(0xFF3AA1CF).withValues(alpha: 0.7),
-    //                 index.isEven
-    //                     ? Color(0xFF1D9E83).withValues(alpha: 0.9)
-    //                     : Color(0xFF3AA1CF).withValues(alpha: 0.9),
-    //               ],
-    //               begin: Alignment.topLeft,
-    //               end: Alignment.bottomRight,
-    //             ),
-    //           ),
-    //         ),
-    //       ),
-    //       Container(
-    //         padding: const EdgeInsets.only(
-    //           left: 20,
-    //           right: 20,
-    //           top: 14,
-    //           bottom: 14,
-    //         ),
-    //         child: Column(
-    //           crossAxisAlignment: CrossAxisAlignment.start,
-    //           children: [
-    //             Text(
-    //               package.item.toString(),
-    //               overflow: TextOverflow.ellipsis,
-    //               maxLines: 1,
-    //               style: TextStyle(
-    //                 color: Theme.of(context).colorScheme.secondary,
-    //                 fontSize: 22,
-    //                 fontWeight: FontWeight.bold,
-    //               ),
-    //             ),
-    //             Text(
-    //               package.bottleType.toString(),
-    //               style: TextStyle(
-    //                 color: Theme.of(context).colorScheme.secondary,
-    //                 fontSize: 12,
-    //               ),
-    //             ),
-    //             Row(
-    //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    //               children: [
-    //                 Column(
-    //                   crossAxisAlignment: CrossAxisAlignment.start,
-    //                   children: [
-    //                     Text(
-    //                       '${package.bottlesRemaining} ${AppStrings.leftbottles}',
-    //                       style: TextStyle(
-    //                         color: Theme.of(context).colorScheme.secondary,
-    //                         fontSize: 16,
-    //                       ),
-    //                     ),
-    //                   ],
-    //                 ),
-    //                 Container(
-    //                   margin: EdgeInsets.only(bottom: 4),
-    //                   decoration: BoxDecoration(
-    //                     color: Theme.of(context).colorScheme.inversePrimary,
-    //                     borderRadius: BorderRadius.circular(100),
-    //                   ),
-    //                   child: IconButton(
-    //                     icon: Icon(
-    //                       color: Theme.of(context).colorScheme.secondary,
-    //                       Icons.playlist_add_rounded,
-    //                     ),
-    //                     onPressed: () {
-    //                       Navigator.push(
-    //                         context,
-    //                         MaterialPageRoute(
-    //                           builder:
-    //                               (context) =>
-    //                                   PlaceOrderScreen(package: package),
-    //                         ),
-    //                       );
-    //                     },
-    //                   ),
-    //                 ),
-    //               ],
-    //             ),
-    //             Column(
-    //               crossAxisAlignment: CrossAxisAlignment.start,
-    //               children: [
-    //                 ClipRRect(
-    //                   borderRadius: BorderRadius.circular(10),
-    //                   child: LinearProgressIndicator(
-    //                     value: double.parse(consumedPercentage.toString()),
-    //                     backgroundColor: Colors.white.withValues(alpha: 0.3),
-    //                     valueColor: AlwaysStoppedAnimation<Color>(
-    //                       Color(0xFF00CFFF),
-    //                     ),
-    //                     minHeight: 8,
-    //                   ),
-    //                 ),
-    //                 SizedBox(height: 8),
-    //                 Row(
-    //                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    //                   children: [
-    //                     Text(
-    //                       AppStrings.consumed,
-    //                       style: TextStyle(
-    //                         color: Theme.of(context).colorScheme.secondary,
-    //                         fontSize: 12,
-    //                       ),
-    //                     ),
-    //                     Text(
-    //                       '${(consumedPercentage * 100).toInt()}%',
-    //                       style: TextStyle(
-    //                         color: Colors.white,
-    //                         fontSize: 12,
-    //                         fontWeight: FontWeight.bold,
-    //                       ),
-    //                     ),
-    //                   ],
-    //                 ),
-    //               ],
-    //             ),
-    //           ],
-    //         ),
-    //       ),
-    //     ],
-    //   ),
-    // );
   }
 }
 

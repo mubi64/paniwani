@@ -58,6 +58,17 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
   }
 
   Future<void> getCurrentLocation() async {
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) return;
+
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied ||
+        permission == LocationPermission.deniedForever) {
+      permission = await Geolocator.requestPermission();
+      if (permission != LocationPermission.whileInUse &&
+          permission != LocationPermission.always)
+        return;
+    }
     final position = await Geolocator.getCurrentPosition();
     setState(() {
       currentLocation = LatLng(position.latitude, position.longitude);
@@ -176,7 +187,10 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                   DraggableScrollableSheet(
                     initialChildSize: 0.25,
                     minChildSize: 0.2,
-                    maxChildSize: 0.56,
+                    maxChildSize:
+                        widget.orderData!.outstandingQuantity != 0
+                            ? 0.56
+                            : 0.35,
                     builder: (context, scrollController) {
                       return ListView(
                         shrinkWrap: true,

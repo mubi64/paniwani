@@ -108,4 +108,7 @@ class AppStrings {
   static String deliveredQty = "Delivered Quantity";
   static String receivedQty = "Received Quantity";
   static String received = 'Received';
+  static String pleaseEnterMobileNumber = 'Please enter a valid phone number';
+  static String baseUrl = "Base URL";
+  static String pleaseEnterBaseUrl = "Please enter the base URL";
 }
